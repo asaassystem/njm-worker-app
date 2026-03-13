@@ -1,65 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layoutDirection="rtl">
+    android:background="@color/njm_navy">
 
-    <!-- NJM Header -->
+    <!-- Header with Logo -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#1a2744"
+        android:background="@color/njm_navy"
         android:padding="12dp"
         android:gravity="center_vertical">
 
-        <TextView
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/ic_launcher"
+            android:layout_marginEnd="12dp" />
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="&#x646;&#x62c;&#x645; &#x627;&#x644;&#x645;&#x648;&#x642;&#x648;&#x62f;"
-            android:textColor="#c9a227"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvWorkerName"
+            <TextView
+                android:id="@+id/tvWorkerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/njm_gold"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDeveloper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="meshari.tech"
+                android:textColor="#888888"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <!-- Language Buttons -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"/>
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnLangAr"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="ع"
+                android:textSize="12sp"
+                android:backgroundTint="@color/njm_gold"
+                android:textColor="@color/njm_navy"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnLangEn"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="En"
+                android:textSize="12sp"
+                android:backgroundTint="#555555"
+                android:textColor="@android:color/white"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_marginStart="4dp" />
+
+            <Button
+                android:id="@+id/btnLangBn"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="বা"
+                android:textSize="12sp"
+                android:backgroundTint="#555555"
+                android:textColor="@android:color/white"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_marginStart="4dp" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnLogout"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:text="&#x62e;&#x631;&#x648;&#x62c;"
+            android:text="خروج"
             android:textSize="12sp"
-            android:backgroundTint="#c9a227"
-            android:textColor="#1a2744"
-            android:layout_marginStart="8dp"/>
+            android:backgroundTint="#CC0000"
+            android:textColor="@android:color/white"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:layout_marginStart="8dp" />
 
     </LinearLayout>
 
-    <!-- TabLayout with NJM colors -->
+    <!-- Tab Layout -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#1a2744"
-        app:tabSelectedTextColor="#c9a227"
-        app:tabTextColor="#AAAAAA"
-        app:tabIndicatorColor="#c9a227"
-        app:tabIndicatorHeight="3dp"
-        app:tabMode="fixed"
-        app:tabGravity="fill"
-        xmlns:app="http://schemas.android.com/apk/res-auto"/>
+        android:background="@color/njm_navy"
+        app:tabTextColor="#888888"
+        app:tabSelectedTextColor="@color/njm_gold"
+        app:tabIndicatorColor="@color/njm_gold"
+        app:tabMode="scrollable" />
 
+    <!-- ViewPager -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 </LinearLayout>
