@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Navy background -->
+    <path android:fillColor="#1a2744"
+          android:pathData="M0,0 L108,0 L108,108 L0,108 Z"/>
+
+    <!-- Gold circle frame -->
+    <path android:fillColor="#c9a227"
+          android:pathData="M54,8 A46,46 0 1,0 54,100 A46,46 0 1,0 54,8 Z"/>
+    <path android:fillColor="#1a2744"
+          android:pathData="M54,12 A42,42 0 1,0 54,96 A42,42 0 1,0 54,12 Z"/>
+
+    <!-- Star rays - Navy gold -->
+    <path android:fillColor="#c9a227"
+          android:pathData="M52,20 L55,48 L54,50 L53,48 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M52,58 L55,88 L54,90 L53,88 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M18,52 L46,55 L48,54 L46,53 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M62,52 L90,55 L92,54 L90,53 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M27,27 L48,48 L47,50 L45,48 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M81,27 L60,48 L61,50 L63,48 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M27,81 L48,60 L50,61 L48,63 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M81,81 L60,60 L58,61 L60,63 Z"/>
+
+    <!-- Secondary rays -->
+    <path android:fillColor="#c9a227"
+          android:pathData="M32,22 L49,47 L47,49 L46,46 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M76,22 L59,47 L61,49 L62,46 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M20,38 L45,52 L46,50 L44,49 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M88,38 L63,52 L62,50 L64,49 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M20,70 L45,56 L46,58 L44,59 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M88,70 L63,56 L62,58 L64,59 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M32,86 L49,61 L51,62 L49,64 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M76,86 L59,61 L57,62 L59,64 Z"/>
+
+    <!-- Center diamond -->
+    <path android:fillColor="#c9a227"
+          android:pathData="M54,47 L60,54 L54,61 L48,54 Z"/>
+
+    <!-- Arabic calligraphy stroke -->
+    <path android:fillColor="#c9a227"
+          android:pathData="M54,62 C52,65 48,70 44,75 C41,79 39,83 40,85 C41,87 43,86 45,83 C47,80 48,76 50,72 C52,68 54,65 55,62 Z"/>
+    <path android:fillColor="#c9a227"
+          android:pathData="M38,82 A3,3 0 1,0 38,88 A3,3 0 1,0 38,82 Z"/>
+
+</vector>
