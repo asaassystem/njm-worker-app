@@ -44,15 +44,13 @@ jobs:
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
-      if: success()
       with:
-        tag_name: v${{ github.run_number }}
-        name: "NJM Worker v${{ github.run_number }}"
-        body: |
-          NJM Worker App - APK for Sunmi V2s
-          Built automatically from main branch
+        tag_name: v62
+        name: "NJM Worker v62 - Fix JSON Content-Type"
         files: app/build/outputs/apk/debug/app-debug.apk
-        draft: false
-        prerelease: false
+        body: |
+          Fix: HTTP 415 error - now uses JSON Content-Type for all POST requests
+          Fix: Updated API endpoints to match server
+          Fix: SessionManager refactored for context-based usage
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
