@@ -24,16 +24,4 @@
 
     <style name="Theme.NjmWorker.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <!-- PIN Button Style -->
-    <style name="PinButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:layout_width">72dp</item>
-        <item name="android:layout_height">72dp</item>
-        <item name="android:textSize">24sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="app:cornerRadius">36dp</item>
-        <item name="app:strokeColor">@color/divider</item>
-        <item name="android:layout_margin">6dp</item>
-    </style>
-
 </resources>
