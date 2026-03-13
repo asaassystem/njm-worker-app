@@ -1,27 +1,27 @@
 package com.njm.worker.printer
 
 import android.content.Context
-import android.widget.Toast
 import com.njm.worker.data.model.Invoice
 import com.njm.worker.data.model.WashRecord
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 /**
- * PrintManager - delegates to PrinterManager for Sunmi V2s printer
+ * PrintManager - delegates to PrinterManager for Sunmi V2s
  * Uses reflection-based AIDL (no Sunmi SDK dependency required)
  */
 object PrintManager {
 
-    fun bindPrinter(context: Context) {
-        PrinterManager.bindService(context) {
-            // Printer ready
-        }
+    fun bindPrinter(context: Context, onReady: () -> Unit = {}) {
+        PrinterManager.init(context, onReady)
     }
 
     fun printWashReceipt(context: Context, wash: WashRecord, activity: android.app.Activity) {
-        PrinterManager.printWashReceipt(context, wash)
+        PrinterManager.printWashReceipt(
+            workerName = "",
+            plateName = wash.plateNumber ?: "",
+            carType = wash.carType ?: "",
+            cost = wash.cost ?: 0.0,
+            orgName = wash.orgName ?: ""
+        )
     }
 
     fun printInvoice(context: Context, invoice: Invoice, activity: android.app.Activity) {
