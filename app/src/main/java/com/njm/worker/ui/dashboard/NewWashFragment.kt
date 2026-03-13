@@ -116,7 +116,6 @@ class NewWashFragment : Fragment() {
     }
 
     private fun setupForm(view: View) {
-        val rgPayment = view.findViewById<RadioGroup>(R.id.rgPayment)
         val etNotes = view.findViewById<EditText>(R.id.etWashNotes)
         val btnRecord = view.findViewById<Button>(R.id.btnRecordWash)
         val btnPrint = view.findViewById<Button>(R.id.btnPrintReceipt)
