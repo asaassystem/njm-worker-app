@@ -18,33 +18,39 @@ import kotlinx.coroutines.launch
 
 class SearchActivity : AppCompatActivity() {
     private val repo = WorkerRepository()
-    private lateinit var etPlate: EditText
+    private lateinit var etPlateNumber: EditText
     private lateinit var rvCars: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private lateinit var tvEmpty: TextView
+    private lateinit var tvNoResults: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        etPlate = findViewById(R.id.etPlate)
+        etPlateNumber = findViewById(R.id.etPlateNumber)
         rvCars = findViewById(R.id.rvCars)
         progressBar = findViewById(R.id.progressBar)
-        tvEmpty = findViewById(R.id.tvEmpty)
+        tvNoResults = findViewById(R.id.tvNoResults)
 
         rvCars.layoutManager = LinearLayoutManager(this)
 
         findViewById<Button>(R.id.btnSearch).setOnClickListener {
-            val plate = etPlate.text.toString().trim()
+            val plate = etPlateNumber.text.toString().trim()
             if (plate.isNotEmpty()) doSearch(plate)
+            else Toast.makeText(this, "Enter plate number", Toast.LENGTH_SHORT).show()
         }
 
-        findViewById<View>(R.id.btnBack).setOnClickListener { finish() }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     private fun doSearch(plate: String) {
         progressBar.visibility = View.VISIBLE
-        tvEmpty.visibility = View.GONE
+        tvNoResults.visibility = View.GONE
         rvCars.visibility = View.GONE
 
         lifecycleScope.launch {
@@ -53,14 +59,14 @@ class SearchActivity : AppCompatActivity() {
             result.onSuccess { data ->
                 val cars = data.cars ?: emptyList()
                 if (cars.isEmpty()) {
-                    tvEmpty.visibility = View.VISIBLE
+                    tvNoResults.visibility = View.VISIBLE
                 } else {
                     rvCars.visibility = View.VISIBLE
                     rvCars.adapter = CarAdapter(cars) { car -> doRecordWash(car) }
                 }
             }
             result.onFailure {
-                tvEmpty.visibility = View.VISIBLE
+                tvNoResults.visibility = View.VISIBLE
                 Toast.makeText(this@SearchActivity, it.message ?: "Error", Toast.LENGTH_SHORT).show()
             }
         }
@@ -70,7 +76,7 @@ class SearchActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val result = repo.recordWash(car.id)
             result.onSuccess {
-                Toast.makeText(this@SearchActivity, getString(R.string.wash_recorded), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@SearchActivity, "Wash recorded!", Toast.LENGTH_SHORT).show()
                 finish()
             }
             result.onFailure {
