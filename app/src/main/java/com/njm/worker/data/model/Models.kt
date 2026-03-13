@@ -2,69 +2,55 @@ package com.njm.worker.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class PinLoginRequest(
-    val pin: String,
-    val lang: String = "ar"
+data class LoginRequest(val pin: String)
+
+data class LoginResponse(
+    val success: Boolean,
+    val message: String?,
+    @SerializedName("worker_id") val workerId: Int?,
+    @SerializedName("worker_name") val workerName: String?,
+    @SerializedName("org_id") val orgId: Int?
 )
 
-data class PinLoginResponse(
-    val success: Boolean,
-    val message: String? = null
-)
-
-data class WorkerInfoResponse(
-    val success: Boolean,
-    val name: String = "",
-    val org_id: Int? = null
+data class WorkerInfo(
+    @SerializedName("worker_id") val workerId: Int,
+    @SerializedName("worker_name") val workerName: String,
+    @SerializedName("org_id") val orgId: Int,
+    @SerializedName("org_name") val orgName: String?
 )
 
 data class Car(
     val id: Int,
-    val plate_number: String,
-    val car_type: String,
-    val car_type_label: String,
-    val color: String,
-    val org_name: String,
-    val price: Double
+    @SerializedName("plate_number") val plateNumber: String,
+    @SerializedName("car_type") val carType: String,
+    @SerializedName("organization_id") val orgId: Int,
+    val price: Double?
 )
 
-data class SearchCarResponse(
+data class SearchResponse(
     val success: Boolean,
-    val cars: List<Car>? = null,
-    val message: String? = null
-)
-
-data class RecordWashRequest(
-    val car_id: Int,
-    val is_paid: Int = 1,
-    val notes: String = ""
-)
-
-data class RecordWashResponse(
-    val success: Boolean,
-    val message: String = "",
-    val cost: Double = 0.0,
-    val wash_id: Int = 0
+    val cars: List<Car>?,
+    val message: String?
 )
 
 data class WashRecord(
     val id: Int,
-    val plate_number: String,
-    val car_type: String,
-    val org_name: String,
-    val cost: Double,
-    val is_paid: Int,
-    val wash_time_fmt: String
+    @SerializedName("car_id") val carId: Int,
+    @SerializedName("plate_number") val plateNumber: String?,
+    @SerializedName("car_type") val carType: String?,
+    @SerializedName("wash_date") val washDate: String?,
+    val cost: Double?,
+    @SerializedName("is_paid") val isPaid: Boolean?
+)
+
+data class WashResponse(
+    val success: Boolean,
+    val message: String?,
+    @SerializedName("record_id") val recordId: Int?
 )
 
 data class TodayWashesResponse(
     val success: Boolean,
-    val washes: List<WashRecord>? = null,
-    val total: Int = 0,
-    val total_amount: Double = 0.0
-)
-
-data class BaseResponse(
-    val success: Boolean,
-    val message: String? = null
+    val washes: List<WashRecord>?,
+    val count: Int?
 )
