@@ -55,7 +55,6 @@ class TodayFragment : Fragment() {
                         onTogglePaid = { wash -> togglePayment(wash) }
                     )
                 }
-                (activity as? DashboardActivity)?.loadStats()
             }.also {
                 repo.getTodayWashes().onFailure { tvEmpty.visibility = View.VISIBLE }
             }
