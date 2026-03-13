@@ -112,7 +112,9 @@ class SearchActivity : AppCompatActivity() {
                             cost = data.cost,
                             isPaid = 1,
                             washDate = null,
-                            washTime = null
+                            washTime = null,
+                            ownerName = null,
+                            ownerPhone = null
                         )
                         PrintManager.printWashReceipt(this@SearchActivity, fakeWash, this@SearchActivity)
                     }
