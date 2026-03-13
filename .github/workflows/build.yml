@@ -45,26 +45,28 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v65
-          name: "NJM Worker v65 - NJM Logo + ZATCA Invoice Settings"
+          tag_name: v66
+          name: "NJM Worker v66 - Sunmi SDK + App Icon + Logo"
           files: app/build/outputs/apk/debug/app-debug.apk
           body: |
-            ## NJM Worker App v65 - Logo + Invoice Design Update
+            ## NJM Worker App v66 - Full Sunmi SDK Integration
 
-            ### What's New:
-            - ✅ NJM Logo (شعار نجم) added everywhere in the app
-            - ✅ ZATCA invoice settings (VAT 15%) - org name, VAT number, CR number, address
-            - ✅ Sunmi V2s auto-detect button with status indicator
-            - ✅ Paper size selection: 58mm (Sunmi V2s default) / 80mm
-            - ✅ Auto-print invoice option after wash
-            - ✅ Full Arabic/English/Bengali language support
-            - ✅ meshari.tech developer credit on all screens
-            - ✅ Connected to admincup_njm database via njm.company API
+            ### What's Fixed:
+            - ✅ Sunmi SDK (com.sunmi:printerlibrary:1.0.23) properly added to build.gradle
+            - ✅ PrinterManager uses InnerPrinterManager.getInstance().bindService() - Official API
+            - ✅ NjmApp binds printer on Application startup automatically
+            - ✅ App icon (NJM gold star on navy) appears on home screen
+            - ✅ NJM logo vector drawable updated with proper star compass design
+            - ✅ ZATCA invoice settings: org name, VAT number, CR number, address
+            - ✅ Printer auto-detect with status indicator
+            - ✅ Paper size: 58mm (Sunmi V2s) / 80mm
+            - ✅ meshari.tech developer credit everywhere
+            - ✅ admincup_njm database connected via njm.company
 
-            ### Technical:
-            - Sunmi V2s AIDL reflection-based printer binding
-            - ZATCA-compliant invoices with 15% VAT
-            - SharedPreferences for print/invoice settings persistence
+            ### Sunmi V2s Integration:
+            - Binds to com.sunmi.peripheral.printer via InnerPrinterManager
+            - Auto-reconnects if disconnected
+            - Falls back gracefully on non-Sunmi devices
 
             Developer: meshari.tech
         env:
