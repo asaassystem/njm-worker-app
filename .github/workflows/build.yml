@@ -11,6 +11,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,18 +45,27 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v64
-          name: "NJM Worker v64 - Sunmi + Printer Full"
+          tag_name: v65
+          name: "NJM Worker v65 - NJM Logo + ZATCA Invoice Settings"
           files: app/build/outputs/apk/debug/app-debug.apk
           body: |
-            NJM Worker App - Full Features Build
-            - Sunmi V2s printer auto-detection via AIDL
-            - ZATCA-compliant invoices (15% VAT)
-            - Arabic / English / Bengali language support
-            - Dashboard: Today / Month / Invoices / Print / Settings
-            - Record new wash with car search
-            - Auto-print receipt after recording
-            - Network ESC/POS printer support
-            - meshari.tech developer credit
+            ## NJM Worker App v65 - Logo + Invoice Design Update
+
+            ### What's New:
+            - ✅ NJM Logo (شعار نجم) added everywhere in the app
+            - ✅ ZATCA invoice settings (VAT 15%) - org name, VAT number, CR number, address
+            - ✅ Sunmi V2s auto-detect button with status indicator
+            - ✅ Paper size selection: 58mm (Sunmi V2s default) / 80mm
+            - ✅ Auto-print invoice option after wash
+            - ✅ Full Arabic/English/Bengali language support
+            - ✅ meshari.tech developer credit on all screens
+            - ✅ Connected to admincup_njm database via njm.company API
+
+            ### Technical:
+            - Sunmi V2s AIDL reflection-based printer binding
+            - ZATCA-compliant invoices with 15% VAT
+            - SharedPreferences for print/invoice settings persistence
+
+            Developer: meshari.tech
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
