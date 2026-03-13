@@ -2,8 +2,10 @@ package com.njm.worker.printer
 
 import android.app.Activity
 import android.content.Context
+import com.njm.worker.data.model.CarDetail
 import com.njm.worker.data.model.Invoice
 import com.njm.worker.data.model.WashRecord
+import com.njm.worker.data.model.WashResponse
 
 /**
  * PrintManager wrapper - delegates to PrinterManager (Sunmi AIDL via reflection)
@@ -30,6 +32,30 @@ object PrintManager {
             carType = wash.carType ?: "",
             cost = wash.cost ?: 0.0,
             orgName = wash.orgName ?: ""
+        )
+    }
+
+    // Called by NewWashFragment after recording wash:
+    // PrintManager.printWashReceipt(act, car, resp, isPaid)
+    fun printWashReceipt(context: Context, car: CarDetail, resp: WashResponse, isPaid: Int) {
+        PrinterManager.printWashReceipt(
+            workerName = "",
+            plateName = car.plateNumber,
+            carType = car.carTypeLabel ?: car.carType ?: "",
+            cost = car.washPrice ?: resp.cost ?: 0.0,
+            orgName = car.orgName ?: ""
+        )
+    }
+
+    // Called by NewWashFragment btnPrint:
+    // PrintManager.printReceiptForCar(act, car)
+    fun printReceiptForCar(context: Context, car: CarDetail) {
+        PrinterManager.printWashReceipt(
+            workerName = "",
+            plateName = car.plateNumber,
+            carType = car.carTypeLabel ?: car.carType ?: "",
+            cost = car.washPrice ?: 0.0,
+            orgName = car.orgName ?: ""
         )
     }
 
