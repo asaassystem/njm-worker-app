@@ -1,135 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layoutDirection="rtl"
-    android:background="#F5F5F5">
+    android:layoutDirection="rtl">
 
-    <!-- Header -->
+    <!-- NJM Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#1565C0"
-        android:padding="16dp">
+        android:orientation="horizontal"
+        android:background="#1a2744"
+        android:padding="12dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="&#x646;&#x62c;&#x645; &#x627;&#x644;&#x645;&#x648;&#x642;&#x648;&#x62f;"
+            android:textColor="#c9a227"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tvWorkerName"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Worker"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="8dp">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="#1976D2"
-                android:padding="8dp"
-                android:layout_marginEnd="4dp">
-
-                <TextView
-                    android:id="@+id/tvTodayCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Today Washes"
-                    android:textColor="#BBDEFB"
-                    android:textSize="11sp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="#1976D2"
-                android:padding="8dp"
-                android:layout_marginStart="4dp">
-
-                <TextView
-                    android:id="@+id/tvTodayRevenue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Revenue (SAR)"
-                    android:textColor="#BBDEFB"
-                    android:textSize="11sp"/>
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Tabs -->
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#1565C0"
-        app:tabTextColor="#90CAF9"
-        app:tabSelectedTextColor="#FFFFFF"
-        app:tabIndicatorColor="#FFFFFF"
-        app:tabMode="fixed"/>
-
-    <!-- ViewPager -->
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-    <!-- Bottom Action Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:background="#FFFFFF"
-        android:elevation="4dp">
-
-        <Button
-            android:id="@+id/btnSearchCar"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Search Car"
-            android:backgroundTint="#1565C0"
-            android:textColor="#FFFFFF"
-            android:layout_margin="4dp"/>
+            android:textSize="14sp"/>
 
         <Button
             android:id="@+id/btnLogout"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Logout"
-            android:backgroundTint="#F44336"
-            android:textColor="#FFFFFF"
-            android:layout_margin="4dp"/>
+            android:layout_height="32dp"
+            android:text="&#x62e;&#x631;&#x648;&#x62c;"
+            android:textSize="12sp"
+            android:backgroundTint="#c9a227"
+            android:textColor="#1a2744"
+            android:layout_marginStart="8dp"/>
+
     </LinearLayout>
+
+    <!-- TabLayout with NJM colors -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1a2744"
+        app:tabSelectedTextColor="#c9a227"
+        app:tabTextColor="#AAAAAA"
+        app:tabIndicatorColor="#c9a227"
+        app:tabIndicatorHeight="3dp"
+        app:tabMode="fixed"
+        app:tabGravity="fill"
+        xmlns:app="http://schemas.android.com/apk/res-auto"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
