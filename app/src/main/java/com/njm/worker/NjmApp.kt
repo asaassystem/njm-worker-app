@@ -1,1 +1,11 @@
-cGFja2FnZSBjb20ubmptLndvcmtlcgoKaW1wb3J0IGFuZHJvaWQuYXBwLkFwcGxpY2F0aW9uCmltcG9ydCBjb20ubmptLndvcmtlci51dGlscy5TZXNzaW9uTWFuYWdlcgoKY2xhc3MgTmptQXBwIDogQXBwbGljYXRpb24oKSB7CiAgICBvdmVycmlkZSBmdW4gb25DcmVhdGUoKSB7CiAgICAgICAgc3VwZXIub25DcmVhdGUoKQogICAgICAgIFNlc3Npb25NYW5hZ2VyLmluaXQodGhpcykKICAgIH0KfQ==
+package com.njm.worker
+
+import android.app.Application
+import com.njm.worker.utils.SessionManager
+
+class NjmApp : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        SessionManager.init(this)
+    }
+}
