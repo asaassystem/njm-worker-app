@@ -3,7 +3,6 @@ package com.njm.worker.ui.dashboard
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -19,10 +18,9 @@ import kotlinx.coroutines.launch
 class DashboardActivity : AppCompatActivity() {
     private val repo = WorkerRepository()
     private lateinit var tvWorkerName: TextView
-    private lateinit var tvTotalToday: TextView
-    private lateinit var rvWashes: RecyclerView
-    private lateinit var progressBar: ProgressBar
-    private lateinit var tvEmpty: TextView
+    private lateinit var tvTodayCount: TextView
+    private lateinit var rvTodayWashes: RecyclerView
+    private lateinit var tvNoWashes: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,16 +35,14 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun setupViews() {
         tvWorkerName = findViewById(R.id.tvWorkerName)
-        tvTotalToday = findViewById(R.id.tvTotalToday)
-        rvWashes = findViewById(R.id.rvWashes)
-        progressBar = findViewById(R.id.progressBar)
-        tvEmpty = findViewById(R.id.tvEmpty)
+        tvTodayCount = findViewById(R.id.tvTodayCount)
+        rvTodayWashes = findViewById(R.id.rvTodayWashes)
+        tvNoWashes = findViewById(R.id.tvNoWashes)
 
         tvWorkerName.text = SessionManager.getWorkerName(this)
+        rvTodayWashes.layoutManager = LinearLayoutManager(this)
 
-        rvWashes.layoutManager = LinearLayoutManager(this)
-
-        findViewById<View>(R.id.btnSearch).setOnClickListener {
+        findViewById<View>(R.id.btnSearchCar).setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
         }
 
@@ -61,25 +57,24 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun loadData() {
-        progressBar.visibility = View.VISIBLE
         lifecycleScope.launch {
             val result = repo.getTodayWashes()
-            progressBar.visibility = View.GONE
             result.onSuccess { data ->
                 val washes = data.washes ?: emptyList()
-                tvTotalToday.text = washes.size.toString()
+                tvTodayCount.text = washes.size.toString()
                 if (washes.isEmpty()) {
-                    tvEmpty.visibility = View.VISIBLE
-                    rvWashes.visibility = View.GONE
+                    tvNoWashes.visibility = View.VISIBLE
+                    rvTodayWashes.visibility = View.GONE
                 } else {
-                    tvEmpty.visibility = View.GONE
-                    rvWashes.visibility = View.VISIBLE
-                    rvWashes.adapter = WashRecordAdapter(washes)
+                    tvNoWashes.visibility = View.GONE
+                    rvTodayWashes.visibility = View.VISIBLE
+                    rvTodayWashes.adapter = WashRecordAdapter(washes)
                 }
             }
             result.onFailure {
-                tvEmpty.visibility = View.VISIBLE
-                rvWashes.visibility = View.GONE
+                tvNoWashes.visibility = View.VISIBLE
+                rvTodayWashes.visibility = View.GONE
+                tvTodayCount.text = "0"
             }
         }
     }
