@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="@color/njm_navy">
 
-    <!-- Header with Logo -->
+    <!-- Header with NJM Branding -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,11 +15,15 @@
         android:padding="12dp"
         android:gravity="center_vertical">
 
-        <ImageView
+        <!-- NJM Logo Text (star symbol) -->
+        <TextView
             android:id="@+id/ivLogo"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@mipmap/ic_launcher"
+            android:text="★"
+            android:textSize="28sp"
+            android:textColor="@color/njm_gold"
+            android:gravity="center"
             android:layout_marginEnd="12dp" />
 
         <LinearLayout
@@ -32,25 +36,26 @@
                 android:id="@+id/tvWorkerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="مغسلة نجم"
                 android:textColor="@color/njm_gold"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvDeveloper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="meshari.tech"
-                android:textColor="#888888"
-                android:textSize="10sp" />
+                android:text="NJM Car Wash"
+                android:textColor="#AAAAAA"
+                android:textSize="11sp" />
 
         </LinearLayout>
 
-        <!-- Language Buttons -->
+        <!-- Language Switcher -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginEnd="8dp">
 
             <Button
                 android:id="@+id/btnLangAr"
@@ -120,5 +125,18 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
+    <!-- Developer Credit Footer -->
+    <TextView
+        android:id="@+id/tvDeveloper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="meshari.tech"
+        android:textColor="#666666"
+        android:textSize="10sp"
+        android:gravity="center"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:background="@color/njm_navy" />
 
 </LinearLayout>
