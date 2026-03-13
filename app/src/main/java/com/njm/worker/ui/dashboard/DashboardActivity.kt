@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,18 +32,23 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
-        findViewById<TextView>(R.id.tvWorkerName).text = SessionManager.getWorkerName()
-        findViewById<TextView>(R.id.tvOrgName).text = SessionManager.getOrgName()
+        val tvWorker = findViewById<TextView>(R.id.tvWorkerName)
+        tvWorker.text = SessionManager.getWorkerName()
+        val tvOrg = findViewById<TextView>(R.id.tvOrgName)
+        tvOrg.text = SessionManager.getOrgName()
 
         val rvWashes = findViewById<RecyclerView>(R.id.rvTodayWashes)
         adapter = WashRecordAdapter(washes)
         rvWashes.layoutManager = LinearLayoutManager(this)
         rvWashes.adapter = adapter
 
-        findViewById<Button>(R.id.btnSearchCar).setOnClickListener {
+        val btnSearch = findViewById<Button>(R.id.btnSearchCar)
+        btnSearch.setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
         }
-        findViewById<Button>(R.id.btnLogout).setOnClickListener { doLogout() }
+
+        val btnLogout = findViewById<Button>(R.id.btnLogout)
+        btnLogout.setOnClickListener { doLogout() }
     }
 
     private fun loadData() {
@@ -65,8 +71,9 @@ class DashboardActivity : AppCompatActivity() {
             repo.logout()
             SessionManager.clearSession()
             AppCookieJar.clear()
-            startActivity(Intent(this@DashboardActivity, PinLoginActivity::class.java))
-            finishAffinity()
+            val intent = Intent(this@DashboardActivity, PinLoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         }
     }
 
