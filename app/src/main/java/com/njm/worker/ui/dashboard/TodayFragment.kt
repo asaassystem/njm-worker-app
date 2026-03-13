@@ -1,5 +1,6 @@
 package com.njm.worker.ui.dashboard
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.njm.worker.R
+import com.njm.worker.data.model.WashRecord
 import com.njm.worker.data.repository.WorkerRepository
 import kotlinx.coroutines.launch
 
@@ -25,40 +27,54 @@ class TodayFragment : Fragment() {
         loadWashes(view)
     }
 
-    override fun onResume() {
-        super.onResume()
-        view?.let { loadWashes(it) }
-    }
+    override fun onResume() { super.onResume(); view?.let { loadWashes(it) } }
 
     private fun loadWashes(view: View) {
-        val rvTodayWashes = view.findViewById<RecyclerView>(R.id.rvTodayWashes)
-        val tvNoWashes = view.findViewById<TextView>(R.id.tvNoWashes)
-
-        rvTodayWashes.layoutManager = LinearLayoutManager(requireContext())
-
+        val rv = view.findViewById<RecyclerView>(R.id.rvTodayWashes)
+        val tvEmpty = view.findViewById<TextView>(R.id.tvNoWashes)
+        val tvTotal = view.findViewById<TextView>(R.id.tvTodayTotal)
+        val tvPaid = view.findViewById<TextView>(R.id.tvTodayPaid)
+        val tvUnpaid = view.findViewById<TextView>(R.id.tvTodayUnpaid)
+        rv.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {
-            val result = repo.getTodayWashes()
-            result.onSuccess { data ->
+            repo.getTodayWashes().onSuccess { data ->
                 val washes = data.washes ?: emptyList()
-                if (washes.isEmpty()) {
-                    tvNoWashes.visibility = View.VISIBLE
-                    rvTodayWashes.visibility = View.GONE
-                } else {
-                    tvNoWashes.visibility = View.GONE
-                    rvTodayWashes.visibility = View.VISIBLE
-                    rvTodayWashes.adapter = WashRecordAdapter(washes) { wash ->
-                        // Print receipt
-                        (activity as? DashboardActivity)?.let {
-                            PrintManager.printWashReceipt(it, wash, it)
-                        }
-                    }
+                tvEmpty.visibility = if (washes.isEmpty()) View.VISIBLE else View.GONE
+                rv.visibility = if (washes.isEmpty()) View.GONE else View.VISIBLE
+                val total = washes.sumOf { it.cost ?: 0.0 }
+                val paid = washes.filter { (it.isPaid ?: 1) == 1 }.sumOf { it.cost ?: 0.0 }
+                val unpaid = washes.filter { (it.isPaid ?: 1) == 0 }.sumOf { it.cost ?: 0.0 }
+                tvTotal?.text = String.format("%.0f ر.س", total)
+                tvPaid?.text = String.format("%.0f ر.س", paid)
+                tvUnpaid?.text = String.format("%.0f ر.س", unpaid)
+                if (washes.isNotEmpty()) {
+                    rv.adapter = WashRecordAdapter(washes,
+                        onPrint = { wash ->
+                            (activity as? DashboardActivity)?.let { PrintManager.printWashReceipt(it, wash, it) }
+                        },
+                        onTogglePaid = { wash -> togglePayment(wash) }
+                    )
                 }
                 (activity as? DashboardActivity)?.loadStats()
-            }
-            result.onFailure {
-                tvNoWashes.visibility = View.VISIBLE
-                rvTodayWashes.visibility = View.GONE
+            }.also {
+                repo.getTodayWashes().onFailure { tvEmpty.visibility = View.VISIBLE }
             }
         }
+    }
+
+    private fun togglePayment(wash: WashRecord) {
+        val newPaid = if ((wash.isPaid ?: 1) == 1) 0 else 1
+        val msg = if (newPaid == 1) "تحديد كمدفوع؟" else "تحديد كغير مدفوع؟"
+        AlertDialog.Builder(requireContext())
+            .setTitle("تحديث حالة الدفع")
+            .setMessage(msg)
+            .setPositiveButton("نعم") { _, _ ->
+                lifecycleScope.launch {
+                    repo.updatePayment(wash.id, newPaid)
+                    view?.let { loadWashes(it) }
+                }
+            }
+            .setNegativeButton("إلغاء", null)
+            .show()
     }
 }
