@@ -1,166 +1,234 @@
 package com.njm.worker.printer
 
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
 import android.util.Log
+import com.sunmi.peripheral.printer.InnerPrinterCallback
+import com.sunmi.peripheral.printer.InnerPrinterException
+import com.sunmi.peripheral.printer.InnerPrinterManager
+import com.sunmi.peripheral.printer.SunmiPrinterService
+import com.njm.worker.data.model.Invoice
+import com.njm.worker.data.model.WashRecord
 
 /**
- * PrinterManager for Sunmi V2s - uses AIDL via reflection
-  * Supports: woyou.aidlservice.jiuiv5 (Sunmi built-in printer service)
-   */
+ * PrinterManager - Official Sunmi SDK integration
+ * Uses InnerPrinterManager (com.sunmi:printerlibrary:1.0.23)
+ * Developer: meshari.tech
+ */
 object PrinterManager {
-        private const val TAG = "NJM_Printer"
 
-        private var printerService: Any? = null
-        private var serviceConnected = false
-        private var pendingOnReady: (() -> Unit)? = null
+    private const val TAG = "NJM_Printer"
+    private var printerService: SunmiPrinterService? = null
+    private var connected = false
 
-        private val serviceConnection = object : ServiceConnection {
-                    override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-                                    try {
-                                                        val stubClass = Class.forName("woyou.aidlservice.jiuiv5.IWoyouService\$Stub")
-                                                                        val asInterface = stubClass.getMethod("asInterface", IBinder::class.java)
-                                                                                        printerService = asInterface.invoke(null, binder)
-                                                                                                        serviceConnected = true
-                                                        Log.d(TAG, "Sunmi printer connected")
-                                    } catch (e: Exception) {
-                                                        Log.w(TAG, "AIDL not available: " + e.message)
-                                                                        serviceConnected = false
-                                    }
-                                                pendingOnReady?.invoke()
-                                                            pendingOnReady = null
-                    }
-                            override fun onServiceDisconnected(name: ComponentName?) {
-                                            printerService = null
-                                            serviceConnected = false
-                            }
+    /**
+     * Initialize and bind Sunmi printer service using official SDK
+     */
+    fun init(context: Context, onReady: () -> Unit = {}) {
+        // If already connected from NjmApp, use it
+        val appPrinter = com.njm.worker.NjmApp.sunmiPrinter
+        if (appPrinter != null && com.njm.worker.NjmApp.printerConnected) {
+            printerService = appPrinter
+            connected = true
+            Log.d(TAG, "Reusing printer from NjmApp")
+            onReady()
+            return
         }
 
-            fun init(context: Context, onReady: () -> Unit) {
-                        pendingOnReady = onReady
-                        try {
-                                        val intent = Intent()
-                                                    intent.setPackage("woyou.aidlservice.jiuiv5")
-                                                                intent.action = "woyou.aidlservice.jiuiv5.IWoyouService"
-                                        val bound = context.applicationContext.bindService(
-                                                            intent, serviceConnection, Context.BIND_AUTO_CREATE
-                                                        )
-                                                    if (!bound) {
-                                                                        Log.w(TAG, "Not a Sunmi device or service unavailable")
-                                                                                        onReady()
-                                                                                                        pendingOnReady = null
-                                                    }
-                        } catch (e: Exception) {
-                                        Log.w(TAG, "Printer init error: " + e.message)
-                                                    onReady()
-                                                                pendingOnReady = null
-                        }
-            }
-
-                fun isAvailable(): Boolean = serviceConnected && printerService != null
-
-        fun printWashReceipt(
-                    workerName: String,
-                    plateName: String,
-                    carType: String,
-                    cost: Double,
-                    orgName: String
-                ) {
-                    val svc = printerService ?: run {
-                                    Log.w(TAG, "Printer not available")
-                                                return
+        try {
+            InnerPrinterManager.getInstance().bindService(
+                context,
+                object : InnerPrinterCallback() {
+                    override fun onConnected(service: SunmiPrinterService?) {
+                        printerService = service
+                        connected = true
+                        com.njm.worker.NjmApp.sunmiPrinter = service
+                        com.njm.worker.NjmApp.printerConnected = true
+                        Log.d(TAG, "✅ Sunmi printer connected")
+                        onReady()
                     }
-                            try {
-                                            val cls = svc.javaClass
-                                            fun txt(s: String) {
-                                                                try { cls.getMethod("printText", String::class.java, Any::class.java).invoke(svc, s, null) }
-                                                                                catch (e: Exception) { Log.w(TAG, "printText err: ${e.message}") }
-                                            }
-                                                        fun align(a: Int) {
-                                                                            try { cls.getMethod("setAlignment", Int::class.java, Any::class.java).invoke(svc, a, null) }
-                                                                                            catch (e: Exception) {}
-                                                        }
-                                                                    fun bold(on: Boolean) {
-                                                                                        try { cls.getMethod("setFontName", String::class.java, Any::class.java).invoke(svc, if (on) "bold" else "normal", null) }
-                                                                                                        catch (e: Exception) {}
-                                                                    }
-                                                                                align(1)
-                                                                                            txt("$orgName\n")
-                                                                                                        txt("------------------------\n")
-                                                                                                                    align(0)
-                                                                                                                                txt("رقم اللوحة: $plateName\n")
-                                                                                                                                            txt("نوع السيارة: $carType\n")
-                                                                                                                                                        txt("الموظف: $workerName\n")
-                                                                                                                                                                    txt("المبلغ: ${String.format("%.2f", cost)} ر.س\n")
-                                                                                                                                                                                txt("------------------------\n")
-                                                                                                                                                                                            align(1)
-                                                                                                                                                                                                        txt("شكراً لزيارتكم\n\n\n")
-                                                                                                                                                                                                                    try { cls.getMethod("cutPaper", Int::class.java, Any::class.java).invoke(svc, 1, null) }
-                                                                                                                                                                                                                                catch (e: Exception) {}
-                                                                                                                                                                                                                                            Log.d(TAG, "Receipt printed OK")
-                                                                                                                                                                                                                                                    } catch (e: Exception) {
-                                            Log.e(TAG, "Print failed: ${e.message}")
-                            }
+
+                    override fun onDisconnected() {
+                        printerService = null
+                        connected = false
+                        com.njm.worker.NjmApp.printerConnected = false
+                        Log.w(TAG, "❌ Printer disconnected")
+                        onReady()
+                    }
+                }
+            )
+        } catch (e: InnerPrinterException) {
+            Log.w(TAG, "Not a Sunmi device: ${e.message}")
+            connected = false
+            onReady()
+        } catch (e: Exception) {
+            Log.w(TAG, "Printer init error: ${e.message}")
+            connected = false
+            onReady()
         }
-    fun isConnected(): Boolean = serviceConnected
+    }
+
+    fun isConnected(): Boolean = connected && printerService != null
 
     fun unbindService(context: Context) {
-        if (serviceConnected) {
-            try { context.unbindService(serviceConnection) } catch (e: Exception) {}
-            serviceConnected = false
-            printerService = null
+        try {
+            if (connected) {
+                InnerPrinterManager.getInstance().unBindService(context, object : InnerPrinterCallback() {
+                    override fun onConnected(service: SunmiPrinterService?) {}
+                    override fun onDisconnected() {
+                        printerService = null
+                        connected = false
+                    }
+                })
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "unbind error: ${e.message}")
         }
     }
 
-    fun printInvoice(context: Context, invoice: com.njm.worker.data.model.Invoice) {
-        val svc = printerService ?: return
+    /**
+     * Print wash receipt - full ZATCA format
+     */
+    fun printWashReceipt(
+        workerName: String,
+        plateName: String,
+        carType: String,
+        cost: Double,
+        orgName: String,
+        isPaid: Boolean = true
+    ) {
+        val svc = printerService ?: run {
+            Log.w(TAG, "Printer not connected")
+            return
+        }
         try {
-            val cls = svc.javaClass
-            fun txt(s: String) = cls.getMethod("printText", String::class.java, Any::class.java).invoke(svc, s, null)
-            fun align(a: Int) = cls.getMethod("setAlignment", Int::class.java, Any::class.java).invoke(svc, a, null)
-            align(1); txt("NJM - ZATCA Invoice\n")
-            txt("Invoice: " + (invoice.invoiceNumber ?: "") + "\n")
-            txt("Date: " + (invoice.invoiceDate ?: "") + "\n")
-            txt("Total: " + (invoice.totalAmount ?: 0.0) + " SAR\n")
-            txt("VAT 15%: " + (invoice.vatAmount ?: 0.0) + " SAR\n")
-            txt("Grand Total: " + (invoice.grandTotal ?: 0.0) + " SAR\n")
-            txt("---------------------------\n")
-            align(1); txt("meshari.tech\n\n\n")
-            try { cls.getMethod("cutPaper", Int::class.java, Any::class.java).invoke(svc, 1, null) } catch (e: Exception) {}
-        } catch (e: Exception) { android.util.Log.e(TAG, "Invoice print failed: " + e.message) }
+            svc.printerInit(null)
+            svc.setAlignment(1, null)         // center
+            svc.setFontSize(28f, null)
+            svc.printText("$orgName\n", null)
+            svc.setFontSize(20f, null)
+            svc.printText("مغسلة نجم - NJM Car Wash\n", null)
+            svc.printText("حفر الباطن - Hafar Al Batin\n", null)
+            svc.setAlignment(0, null)         // left
+            svc.setFontSize(24f, null)
+            svc.printText("--------------------------------\n", null)
+            svc.printText("رقم اللوحة: $plateName\n", null)
+            svc.printText("نوع السيارة: $carType\n", null)
+            if (workerName.isNotBlank()) {
+                svc.printText("الموظف: $workerName\n", null)
+            }
+            svc.printText("المبلغ: ${String.format("%.2f", cost)} ر.س\n", null)
+            val vatAmount = cost * 0.15 / 1.15
+            val preTax = cost - vatAmount
+            svc.printText("المبلغ قبل الضريبة: ${String.format("%.2f", preTax)} ر.س\n", null)
+            svc.printText("ضريبة القيمة المضافة 15%: ${String.format("%.2f", vatAmount)} ر.س\n", null)
+            svc.printText("الحالة: ${if (isPaid) "مدفوع ✅" else "غير مدفوع ⏳"}\n", null)
+            svc.printText("--------------------------------\n", null)
+            svc.setAlignment(1, null)
+            svc.printText("شكراً لزيارتكم\n", null)
+            svc.printText("meshari.tech\n", null)
+            svc.printText("\n\n\n", null)
+            svc.cutPaper(1, null)
+            Log.d(TAG, "Receipt printed OK")
+        } catch (e: Exception) {
+            Log.e(TAG, "printWashReceipt failed: ${e.message}")
+        }
     }
 
-    fun printDailyReport(context: Context, washes: List<com.njm.worker.data.model.WashRecord>, date: String) {
+    /**
+     * Print ZATCA-compliant invoice
+     */
+    fun printInvoice(context: Context, invoice: Invoice) {
+        val svc = printerService ?: run { Log.w(TAG, "Printer not connected"); return }
+        val prefs = context.getSharedPreferences("print_settings", Context.MODE_PRIVATE)
+        val orgName = prefs.getString("org_name", "مغسلة نجم") ?: "مغسلة نجم"
+        val vatNumber = prefs.getString("vat_number", "") ?: ""
+        val crNumber = prefs.getString("cr_number", "") ?: ""
+        val address = prefs.getString("address", "حفر الباطن") ?: "حفر الباطن"
+
+        try {
+            svc.printerInit(null)
+            svc.setAlignment(1, null)
+            svc.setFontSize(26f, null)
+            svc.printText("فاتورة ضريبية\n", null)
+            svc.printText("TAX INVOICE - ZATCA\n", null)
+            svc.setFontSize(22f, null)
+            svc.printText("$orgName\n", null)
+            svc.setAlignment(0, null)
+            svc.setFontSize(20f, null)
+            svc.printText("--------------------------------\n", null)
+            svc.printText("رقم الفاتورة: ${invoice.invoiceNumber}\n", null)
+            svc.printText("التاريخ: ${invoice.invoiceDate ?: ""}\n", null)
+            if (vatNumber.isNotBlank()) svc.printText("الرقم الضريبي: $vatNumber\n", null)
+            if (crNumber.isNotBlank()) svc.printText("السجل التجاري: $crNumber\n", null)
+            svc.printText("العنوان: $address\n", null)
+            svc.printText("من: ${invoice.periodStart ?: ""} إلى: ${invoice.periodEnd ?: ""}\n", null)
+            svc.printText("--------------------------------\n", null)
+            svc.printText("عدد الغسيل: ${invoice.totalWashes ?: 0}\n", null)
+            svc.printText("المجموع قبل الضريبة: ${String.format("%.2f", invoice.totalAmount ?: 0.0)} ر.س\n", null)
+            svc.printText("ضريبة القيمة المضافة 15%: ${String.format("%.2f", invoice.vatAmount ?: 0.0)} ر.س\n", null)
+            svc.printText("الإجمالي شامل الضريبة: ${String.format("%.2f", invoice.grandTotal ?: 0.0)} ر.س\n", null)
+            svc.printText("--------------------------------\n", null)
+            svc.setAlignment(1, null)
+            svc.printText("meshari.tech\n\n\n", null)
+            svc.cutPaper(1, null)
+        } catch (e: Exception) {
+            Log.e(TAG, "printInvoice failed: ${e.message}")
+        }
+    }
+
+    fun printDailyReport(context: Context, washes: List<WashRecord>, date: String) {
         val svc = printerService ?: return
         try {
-            val cls = svc.javaClass
-            fun txt(s: String) = cls.getMethod("printText", String::class.java, Any::class.java).invoke(svc, s, null)
-            fun align(a: Int) = cls.getMethod("setAlignment", Int::class.java, Any::class.java).invoke(svc, a, null)
-            align(1); txt("NJM Daily Report - " + date + "\n")
+            svc.printerInit(null)
+            svc.setAlignment(1, null)
+            svc.setFontSize(24f, null)
+            svc.printText("تقرير اليوم\n", null)
+            svc.printText("$date\n", null)
+            svc.setAlignment(0, null)
+            svc.setFontSize(20f, null)
+            svc.printText("--------------------------------\n", null)
             val total = washes.sumOf { it.cost ?: 0.0 }
-            txt("Count: " + washes.size + "\n")
-            txt("Total: " + total + " SAR\n")
-            align(1); txt("meshari.tech\n\n\n")
-            try { cls.getMethod("cutPaper", Int::class.java, Any::class.java).invoke(svc, 1, null) } catch (e: Exception) {}
-        } catch (e: Exception) { android.util.Log.e(TAG, "Daily report failed: " + e.message) }
+            val paid = washes.filter { (it.isPaid ?: 1) == 1 }.sumOf { it.cost ?: 0.0 }
+            val unpaid = total - paid
+            svc.printText("عدد الغسيل: ${washes.size}\n", null)
+            svc.printText("المجموع: ${String.format("%.2f", total)} ر.س\n", null)
+            svc.printText("مدفوع: ${String.format("%.2f", paid)} ر.س\n", null)
+            svc.printText("غير مدفوع: ${String.format("%.2f", unpaid)} ر.س\n", null)
+            svc.printText("--------------------------------\n", null)
+            svc.setAlignment(1, null)
+            svc.printText("meshari.tech\n\n\n", null)
+            svc.cutPaper(1, null)
+        } catch (e: Exception) {
+            Log.e(TAG, "printDailyReport failed: ${e.message}")
+        }
     }
 
-    fun printMonthlyReport(context: Context, washes: List<com.njm.worker.data.model.WashRecord>, month: String) {
+    fun printMonthlyReport(context: Context, washes: List<WashRecord>, month: String) {
         val svc = printerService ?: return
         try {
-            val cls = svc.javaClass
-            fun txt(s: String) = cls.getMethod("printText", String::class.java, Any::class.java).invoke(svc, s, null)
-            fun align(a: Int) = cls.getMethod("setAlignment", Int::class.java, Any::class.java).invoke(svc, a, null)
-            align(1); txt("NJM Monthly Report - " + month + "\n")
+            svc.printerInit(null)
+            svc.setAlignment(1, null)
+            svc.setFontSize(24f, null)
+            svc.printText("تقرير الشهر\n", null)
+            svc.printText("$month\n", null)
+            svc.setAlignment(0, null)
+            svc.setFontSize(20f, null)
+            svc.printText("--------------------------------\n", null)
             val total = washes.sumOf { it.cost ?: 0.0 }
-            txt("Count: " + washes.size + "\n")
-            txt("Total: " + total + " SAR\n")
-            align(1); txt("meshari.tech\n\n\n")
-            try { cls.getMethod("cutPaper", Int::class.java, Any::class.java).invoke(svc, 1, null) } catch (e: Exception) {}
-        } catch (e: Exception) { android.util.Log.e(TAG, "Monthly report failed: " + e.message) }
+            val paid = washes.filter { (it.isPaid ?: 1) == 1 }.sumOf { it.cost ?: 0.0 }
+            val unpaid = total - paid
+            svc.printText("عدد الغسيل: ${washes.size}\n", null)
+            svc.printText("المجموع: ${String.format("%.2f", total)} ر.س\n", null)
+            svc.printText("مدفوع: ${String.format("%.2f", paid)} ر.س\n", null)
+            svc.printText("غير مدفوع: ${String.format("%.2f", unpaid)} ر.س\n", null)
+            svc.printText("--------------------------------\n", null)
+            svc.setAlignment(1, null)
+            svc.printText("meshari.tech\n\n\n", null)
+            svc.cutPaper(1, null)
+        } catch (e: Exception) {
+            Log.e(TAG, "printMonthlyReport failed: ${e.message}")
+        }
     }
 
+    fun isAvailable(): Boolean = isConnected()
 }
