@@ -17,8 +17,8 @@ class CarAdapter(
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvPlate: TextView = view.findViewById(R.id.tvPlate)
         val tvCarType: TextView = view.findViewById(R.id.tvCarType)
-        val tvOrgName: TextView = view.findViewById(R.id.tvOrgName)
-        val btnWash: Button = view.findViewById(R.id.btnWash)
+        val tvPrice: TextView = view.findViewById(R.id.tvPrice)
+        val btnRecordWash: Button = view.findViewById(R.id.btnRecordWash)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,8 +31,9 @@ class CarAdapter(
         val car = cars[position]
         holder.tvPlate.text = car.plateNumber
         holder.tvCarType.text = car.carType ?: ""
-        holder.tvOrgName.text = car.orgName ?: ""
-        holder.btnWash.setOnClickListener { onWashClick(car) }
+        val price = car.washPrice ?: car.washPriceSmall ?: 0.0
+        holder.tvPrice.text = String.format("%.0f", price)
+        holder.btnRecordWash.setOnClickListener { onWashClick(car) }
     }
 
     override fun getItemCount() = cars.size
