@@ -4,7 +4,7 @@ import com.njm.worker.data.api.ApiClient
 import com.njm.worker.data.model.*
 
 class WorkerRepository {
-    private val api = ApiClient.service
+    private val api = ApiClient.apiService
 
     suspend fun login(pin: String): Result<LoginResponse> {
         return try {
