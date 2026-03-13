@@ -3,16 +3,13 @@ package com.njm.worker.ui.dashboard
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.njm.worker.R
-import com.njm.worker.data.api.AppCookieJar
-import com.njm.worker.data.model.WashRecord
 import com.njm.worker.data.repository.WorkerRepository
 import com.njm.worker.ui.login.PinLoginActivity
 import com.njm.worker.ui.search.SearchActivity
@@ -21,47 +18,68 @@ import kotlinx.coroutines.launch
 
 class DashboardActivity : AppCompatActivity() {
     private val repo = WorkerRepository()
-    private lateinit var adapter: WashRecordAdapter
-    private val washes = mutableListOf<WashRecord>()
+    private lateinit var tvWorkerName: TextView
+    private lateinit var tvTotalToday: TextView
+    private lateinit var rvWashes: RecyclerView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var tvEmpty: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!SessionManager.isLoggedIn(this)) {
+            goToLogin()
+            return
+        }
         setContentView(R.layout.activity_dashboard)
         setupViews()
         loadData()
     }
 
     private fun setupViews() {
-        val tvWorker = findViewById<TextView>(R.id.tvWorkerName)
-        tvWorker.text = SessionManager.getWorkerName()
-        val tvOrg = findViewById<TextView>(R.id.tvOrgName)
-        tvOrg.text = SessionManager.getOrgName()
+        tvWorkerName = findViewById(R.id.tvWorkerName)
+        tvTotalToday = findViewById(R.id.tvTotalToday)
+        rvWashes = findViewById(R.id.rvWashes)
+        progressBar = findViewById(R.id.progressBar)
+        tvEmpty = findViewById(R.id.tvEmpty)
 
-        val rvWashes = findViewById<RecyclerView>(R.id.rvTodayWashes)
-        adapter = WashRecordAdapter(washes)
+        tvWorkerName.text = SessionManager.getWorkerName(this)
+
         rvWashes.layoutManager = LinearLayoutManager(this)
-        rvWashes.adapter = adapter
 
-        val btnSearch = findViewById<Button>(R.id.btnSearchCar)
-        btnSearch.setOnClickListener {
+        findViewById<View>(R.id.btnSearch).setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
         }
 
-        val btnLogout = findViewById<Button>(R.id.btnLogout)
-        btnLogout.setOnClickListener { doLogout() }
+        findViewById<View>(R.id.btnLogout).setOnClickListener {
+            doLogout()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadData()
     }
 
     private fun loadData() {
+        progressBar.visibility = View.VISIBLE
         lifecycleScope.launch {
             val result = repo.getTodayWashes()
-            result.onSuccess { resp ->
-                washes.clear()
-                washes.addAll(resp.washes ?: emptyList())
-                adapter.notifyDataSetChanged()
-                val tvCount = findViewById<TextView>(R.id.tvTodayCount)
-                tvCount.text = washes.size.toString()
-                val tvNoWashes = findViewById<TextView>(R.id.tvNoWashes)
-                tvNoWashes.visibility = if (washes.isEmpty()) View.VISIBLE else View.GONE
+            progressBar.visibility = View.GONE
+            result.onSuccess { data ->
+                val washes = data.washes ?: emptyList()
+                tvTotalToday.text = washes.size.toString()
+                if (washes.isEmpty()) {
+                    tvEmpty.visibility = View.VISIBLE
+                    rvWashes.visibility = View.GONE
+                } else {
+                    tvEmpty.visibility = View.GONE
+                    rvWashes.visibility = View.VISIBLE
+                    rvWashes.adapter = WashRecordAdapter(washes)
+                }
+            }
+            result.onFailure {
+                tvEmpty.visibility = View.VISIBLE
+                rvWashes.visibility = View.GONE
             }
         }
     }
@@ -69,16 +87,13 @@ class DashboardActivity : AppCompatActivity() {
     private fun doLogout() {
         lifecycleScope.launch {
             repo.logout()
-            SessionManager.clearSession()
-            AppCookieJar.clear()
-            val intent = Intent(this@DashboardActivity, PinLoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+            SessionManager.logout(this@DashboardActivity)
+            goToLogin()
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadData()
+    private fun goToLogin() {
+        startActivity(Intent(this, PinLoginActivity::class.java))
+        finish()
     }
 }
