@@ -7,13 +7,12 @@ import retrofit2.http.*
 interface NjmApiService {
 
     @POST("api/worker-pin-login")
-    @FormUrlEncoded
     suspend fun loginWithPin(
-        @Field("pin") pin: String
+        @Body request: LoginRequest
     ): Response<LoginResponse>
 
     @GET("api/worker/info")
-    suspend fun getWorkerInfo(): Response<WorkerInfo>
+    suspend fun getWorkerInfo(): Response<WorkerInfoResponse>
 
     @GET("api/worker/search-car")
     suspend fun searchCar(
@@ -21,14 +20,13 @@ interface NjmApiService {
     ): Response<SearchResponse>
 
     @POST("api/worker/record-wash")
-    @FormUrlEncoded
     suspend fun recordWash(
-        @Field("car_id") carId: Int
+        @Body request: RecordWashRequest
     ): Response<WashResponse>
 
     @GET("api/worker/today-washes")
     suspend fun getTodayWashes(): Response<TodayWashesResponse>
 
     @POST("api/worker/logout")
-    suspend fun logout(): Response<LoginResponse>
+    suspend fun logout(): Response<LogoutResponse>
 }
