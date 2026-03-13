@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.njm.worker.R
@@ -76,7 +75,7 @@ class PinLoginActivity : AppCompatActivity() {
     private fun doLogin() {
         val pinStr = pin.toString()
         if (pinStr.length != 4) {
-            tvError.text = getString(R.string.error_pin_length)
+            tvError.text = "PIN must be 4 digits"
             tvError.visibility = View.VISIBLE
             return
         }
@@ -85,7 +84,7 @@ class PinLoginActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                val api = ApiClient.service
+                val api = ApiClient.apiService
                 val response = api.loginWithPin(LoginRequest(pin = pinStr))
                 progressBar.visibility = View.GONE
 
@@ -100,7 +99,7 @@ class PinLoginActivity : AppCompatActivity() {
                     )
                     startDashboard()
                 } else {
-                    val msg = response.body()?.message ?: getString(R.string.error_invalid_pin)
+                    val msg = response.body()?.message ?: "Invalid PIN"
                     tvError.text = msg
                     tvError.visibility = View.VISIBLE
                     pin.clear()
@@ -108,7 +107,7 @@ class PinLoginActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 progressBar.visibility = View.GONE
-                tvError.text = getString(R.string.error_network) + ": " + (e.message ?: "")
+                tvError.text = "Network error: " + (e.message ?: "unknown")
                 tvError.visibility = View.VISIBLE
                 pin.clear()
                 updateDots()
