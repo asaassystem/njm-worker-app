@@ -8,15 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.njm.worker.R
 import com.njm.worker.data.model.WashRecord
 
-class WashRecordAdapter(private val items: List<WashRecord>) :
-    RecyclerView.Adapter<WashRecordAdapter.ViewHolder>() {
+class WashRecordAdapter(
+    private val washes: List<WashRecord>
+) : RecyclerView.Adapter<WashRecordAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvPlate: TextView = view.findViewById(R.id.tvPlateNumber)
-        val tvType: TextView = view.findViewById(R.id.tvCarType)
-        val tvTime: TextView = view.findViewById(R.id.tvWashTime)
-        val tvCost: TextView = view.findViewById(R.id.tvCost)
-        val tvPaid: TextView = view.findViewById(R.id.tvPaidStatus)
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvPlate: TextView = view.findViewById(R.id.tvPlate)
+        val tvTime: TextView = view.findViewById(R.id.tvTime)
+        val tvAmount: TextView = view.findViewById(R.id.tvAmount)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,13 +25,11 @@ class WashRecordAdapter(private val items: List<WashRecord>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        holder.tvPlate.text = item.plateNumber ?: "-"
-        holder.tvType.text = item.carType ?: "-"
-        holder.tvTime.text = item.washDate ?: ""
-        holder.tvCost.text = (item.cost ?: 0.0).toString()
-        holder.tvPaid.text = if (item.isPaid == true) "Paid" else "Unpaid"
+        val w = washes[position]
+        holder.tvPlate.text = w.plateNumber ?: ""
+        holder.tvTime.text = w.washTime ?: ""
+        holder.tvAmount.text = if (w.amount != null) String.format("%.0f", w.amount) else ""
     }
 
-    override fun getItemCount() = items.size
+    override fun getItemCount() = washes.size
 }
