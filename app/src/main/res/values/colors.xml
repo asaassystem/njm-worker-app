@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_blue">#1565C0</color>
-    <color name="primary_blue_dark">#0D47A1</color>
-    <color name="primary_blue_light">#1976D2</color>
-    <color name="accent_blue">#42A5F5</color>
+    <!-- NJM Brand Colors -->
+    <color name="njm_navy">#1a2744</color>
+    <color name="njm_navy_dark">#111b33</color>
+    <color name="njm_navy_light">#243258</color>
+    <color name="njm_gold">#c9a227</color>
+    <color name="njm_gold_light">#e0bb45</color>
+    <color name="njm_gold_dark">#a8851f</color>
+
+    <!-- Legacy Blue Colors (kept for backward compatibility) -->
+    <color name="primary_blue">#1a2744</color>
+    <color name="primary_blue_dark">#111b33</color>
+    <color name="primary_blue_light">#243258</color>
+    <color name="accent_blue">#c9a227</color>
+
+    <!-- Status Colors -->
     <color name="success_green">#2E7D32</color>
     <color name="success_green_light">#4CAF50</color>
     <color name="error_red">#C62828</color>
     <color name="error_red_light">#EF5350</color>
     <color name="warning_orange">#E65100</color>
+    <color name="paid_bg">#E8F5E9</color>
+    <color name="unpaid_bg">#FFF3CD</color>
+
+    <!-- UI Colors -->
     <color name="background_light">#F5F5F5</color>
     <color name="surface_white">#FFFFFF</color>
     <color name="text_primary">#212121</color>
     <color name="text_secondary">#757575</color>
     <color name="text_hint">#BDBDBD</color>
     <color name="divider">#E0E0E0</color>
-    <color name="chip_background">#E3F2FD</color>
+    <color name="chip_background">#E3F0FF</color>
     <color name="pin_dot_empty">#BDBDBD</color>
-    <color name="pin_dot_filled">#1565C0</color>
+    <color name="pin_dot_filled">#c9a227</color>
 </resources>
