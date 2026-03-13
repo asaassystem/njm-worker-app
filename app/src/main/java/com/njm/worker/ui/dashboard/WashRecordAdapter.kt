@@ -13,9 +13,10 @@ class WashRecordAdapter(
 ) : RecyclerView.Adapter<WashRecordAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvPlate: TextView = view.findViewById(R.id.tvPlate)
-        val tvTime: TextView = view.findViewById(R.id.tvTime)
-        val tvAmount: TextView = view.findViewById(R.id.tvAmount)
+        val tvPlateNumber: TextView = view.findViewById(R.id.tvPlateNumber)
+        val tvCarType: TextView = view.findViewById(R.id.tvCarType)
+        val tvWashTime: TextView = view.findViewById(R.id.tvWashTime)
+        val tvCost: TextView = view.findViewById(R.id.tvCost)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,9 +27,10 @@ class WashRecordAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val w = washes[position]
-        holder.tvPlate.text = w.plateNumber ?: ""
-        holder.tvTime.text = w.washTime ?: ""
-        holder.tvAmount.text = if (w.amount != null) String.format("%.0f", w.amount) else ""
+        holder.tvPlateNumber.text = w.plateNumber ?: ""
+        holder.tvCarType.text = w.carType ?: ""
+        holder.tvWashTime.text = w.washTime ?: ""
+        holder.tvCost.text = if (w.amount != null) String.format("%.0f", w.amount) else ""
     }
 
     override fun getItemCount() = washes.size
