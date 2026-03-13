@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="4dp"
-    android:layout_marginVertical="4dp"
-    android:layoutDirection="rtl"
-    app:cardCornerRadius="8dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginBottom="6dp"
+    app:cardCornerRadius="6dp"
     app:cardElevation="2dp">
 
     <LinearLayout
@@ -15,60 +13,67 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="12dp"
-        android:gravity="center_vertical">
+        android:layoutDirection="rtl">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
+
             <TextView
                 android:id="@+id/tvPlateNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ABC-1234"
+                android:textColor="#1565C0"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary" />
+                android:textStyle="bold"/>
+
             <TextView
                 android:id="@+id/tvCarType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/car_type_normal"
-                android:textSize="13sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginTop="2dp" />
+                android:textColor="#666666"
+                android:textSize="12sp"/>
+
             <TextView
                 android:id="@+id/tvWashTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10:30"
-                android:textSize="12sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginTop="2dp" />
+                android:textColor="#999999"
+                android:textSize="12sp"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="end">
+
             <TextView
                 android:id="@+id/tvCost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="25"
+                android:textColor="#2E7D32"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/primary_blue" />
+                android:textStyle="bold"/>
+
             <TextView
                 android:id="@+id/tvPaidStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/paid"
                 android:textSize="11sp"
-                android:textColor="@color/success_green"
-                android:layout_marginTop="4dp" />
+                android:textColor="#4CAF50"/>
+
+            <Button
+                android:id="@+id/btnPrintReceipt"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="Print"
+                android:textSize="11sp"
+                android:backgroundTint="#1565C0"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="4dp"/>
         </LinearLayout>
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>
