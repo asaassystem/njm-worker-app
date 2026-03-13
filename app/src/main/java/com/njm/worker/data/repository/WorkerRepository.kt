@@ -46,6 +46,22 @@ class WorkerRepository {
         } catch (e: Exception) { Result.failure(e) }
     }
 
+    suspend fun getMonthWashes(): Result<MonthWashesResponse> {
+        return try {
+            val resp = api.getMonthWashes()
+            if (resp.isSuccessful && resp.body() != null) Result.success(resp.body()!!)
+            else Result.failure(Exception("Month washes failed"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun updatePayment(washId: Int, isPaid: Int): Result<UpdatePaymentResponse> {
+        return try {
+            val resp = api.updatePayment(UpdatePaymentRequest(washId = washId, isPaid = isPaid))
+            if (resp.isSuccessful && resp.body() != null) Result.success(resp.body()!!)
+            else Result.failure(Exception("Update payment failed"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
     suspend fun getSettings(): Result<SettingsResponse> {
         return try {
             val resp = api.getSettings()
