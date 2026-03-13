@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:layoutDirection="rtl">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header Card -->
+        <androidx.cardview.widget.CardView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#1a2744">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#x7609;&#x26a1;"
+                    android:textSize="40sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#x637;&#x628;&#x627;&#x639;&#x629; &#x627;&#x644;&#x62a;&#x642;&#x627;&#x631;&#x64a;&#x631;"
+                    android:textColor="#c9a227"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#x646;&#x62c;&#x645; &#x627;&#x644;&#x645;&#x648;&#x642;&#x648;&#x62f;"
+                    android:textColor="#CCCCCC"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Report Type Selection Card -->
+        <androidx.cardview.widget.CardView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#x646;&#x648;&#x639; &#x627;&#x644;&#x62a;&#x642;&#x631;&#x64a;&#x631;"
+                    android:textColor="#1a2744"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgReportType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/rbToday"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="&#x62a;&#x642;&#x631;&#x64a;&#x631; &#x627;&#x644;&#x64a;&#x648;&#x645;"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        android:checked="true"
+                        android:buttonTint="#c9a227"
+                        android:paddingStart="8dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <RadioButton
+                        android:id="@+id/rbMonth"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="&#x62a;&#x642;&#x631;&#x64a;&#x631; &#x627;&#x644;&#x634;&#x647;&#x631;"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        android:buttonTint="#c9a227"
+                        android:paddingStart="8dp"/>
+
+                </RadioGroup>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Summary Card (shown after loading) -->
+        <androidx.cardview.widget.CardView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cardSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#x645;&#x644;&#x62e;&#x635; &#x627;&#x644;&#x62a;&#x642;&#x631;&#x64a;&#x631;"
+                    android:textColor="#1a2744"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="#F0F4FF"
+                        android:padding="12dp"
+                        android:layout_marginEnd="4dp">
+
+                        <TextView
+                            android:id="@+id/tvReportCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="#1a2744"
+                            android:textSize="24sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="&#x639;&#x62f;&#x62f;"
+                            android:textColor="#666666"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="#FFF8E1"
+                        android:padding="12dp"
+                        android:layout_marginStart="4dp">
+
+                        <TextView
+                            android:id="@+id/tvReportTotal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0.00"
+                            android:textColor="#c9a227"
+                            android:textSize="20sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="&#x625;&#x62c;&#x645;&#x627;&#x644;&#x64a; &#x631;.&#x633;"
+                            android:textColor="#666666"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="#E8F5E9"
+                        android:padding="12dp"
+                        android:layout_marginEnd="4dp">
+
+                        <TextView
+                            android:id="@+id/tvReportPaid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0.00"
+                            android:textColor="#2E7D32"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="&#x645;&#x62f;&#x641;&#x648;&#x639; &#x631;.&#x633;"
+                            android:textColor="#666666"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="#FFEBEE"
+                        android:padding="12dp"
+                        android:layout_marginStart="4dp">
+
+                        <TextView
+                            android:id="@+id/tvReportUnpaid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0.00"
+                            android:textColor="#C62828"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="&#x63a;&#x64a;&#x631; &#x645;&#x62f;&#x641;&#x648;&#x639; &#x631;.&#x633;"
+                            android:textColor="#666666"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Loading Progress -->
+        <ProgressBar
+            android:id="@+id/progressReport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp"
+            android:indeterminateTint="#c9a227"/>
+
+        <!-- Print Button -->
+        <Button
+            android:id="@+id/btnPrintReport"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="&#x637;&#x628;&#x627;&#x639;&#x629; &#x627;&#x644;&#x62a;&#x642;&#x631;&#x64a;&#x631;"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:backgroundTint="#c9a227"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp"/>
+
+    </LinearLayout>
+</ScrollView>
