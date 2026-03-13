@@ -11,52 +11,51 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-      with:
-        gradle-version: '8.2'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.2'
 
-    - name: Build Debug APK
-      run: gradle assembleDebug --no-daemon
-      env:
-        ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
+      - name: Build Debug APK
+        run: gradle assembleDebug --no-daemon
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
 
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: njm-worker-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
-        retention-days: 30
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: njm-worker-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
 
-    - name: Create Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: v63
-        name: "NJM Worker v63 - Full Features"
-        files: app/build/outputs/apk/debug/app-debug.apk
-        body: |
-          Full features release:
-          - Dashboard with Today/PrintSettings tabs
-          - Revenue stats counter
-          - Print receipt from wash list
-          - Car search with full car details card
-          - Auto-print after recording wash
-          - Network (ESC/POS) + Sunmi builtin printer support
-          - Printer IP/Port settings
-          - Auto-sync: any server update reflected immediately
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v64
+          name: "NJM Worker v64 - Sunmi + Printer Full"
+          files: app/build/outputs/apk/debug/app-debug.apk
+          body: |
+            NJM Worker App - Full Features Build
+            - Sunmi V2s printer auto-detection via AIDL
+            - ZATCA-compliant invoices (15% VAT)
+            - Arabic / English / Bengali language support
+            - Dashboard: Today / Month / Invoices / Print / Settings
+            - Record new wash with car search
+            - Auto-print receipt after recording
+            - Network ESC/POS printer support
+            - meshari.tech developer credit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
