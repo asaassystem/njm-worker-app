@@ -11,6 +11,11 @@ data class RecordWashRequest(
     val notes: String = ""
 )
 
+data class UpdatePaymentRequest(
+    @SerializedName("wash_id") val washId: Int,
+    @SerializedName("is_paid") val isPaid: Int
+)
+
 // ---- Login / Session ----
 data class LoginResponse(
     val success: Boolean,
@@ -69,6 +74,17 @@ data class WashRecord(
 data class TodayWashesResponse(
     val success: Boolean,
     val washes: List<WashRecord>?,
+    val message: String?
+)
+
+data class MonthWashesResponse(
+    val success: Boolean,
+    val washes: List<WashRecord>?,
+    val message: String?
+)
+
+data class UpdatePaymentResponse(
+    val success: Boolean,
     val message: String?
 )
 
