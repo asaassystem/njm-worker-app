@@ -3,9 +3,9 @@ package com.njm.worker.ui.dashboard
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -24,7 +24,10 @@ class DashboardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!SessionManager.isLoggedIn(this)) { goToLogin(); return }
+        if (!SessionManager.isLoggedIn(this)) {
+            goToLogin()
+            return
+        }
         // Apply saved language
         LangManager.applyLanguage(this, SessionManager.getLang(this))
         setContentView(R.layout.activity_dashboard)
@@ -36,10 +39,6 @@ class DashboardActivity : AppCompatActivity() {
         val tvWorkerName = findViewById<TextView>(R.id.tvWorkerName)
         tvWorkerName?.text = SessionManager.getWorkerName(this)
 
-        // Logo
-        val ivLogo = findViewById<ImageView>(R.id.ivLogo)
-        ivLogo?.setImageResource(R.drawable.njm_logo)
-
         // Developer credit
         val tvDev = findViewById<TextView>(R.id.tvDeveloper)
         tvDev?.text = "meshari.tech"
@@ -48,7 +47,7 @@ class DashboardActivity : AppCompatActivity() {
         val viewPager = findViewById<ViewPager2>(R.id.viewPager)
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
 
-        val fragments = listOf(
+        val fragments: List<Fragment> = listOf(
             NewWashFragment(),
             TodayFragment(),
             MonthFragment(),
@@ -56,21 +55,21 @@ class DashboardActivity : AppCompatActivity() {
             PrintSettingsFragment()
         )
 
-        val tabData = listOf(
-            Pair(getLangString("tab_new_wash"), R.drawable.ic_wash),
-            Pair(getLangString("tab_today"), R.drawable.ic_today),
-            Pair(getLangString("tab_month"), R.drawable.ic_month),
-            Pair(getLangString("tab_invoices"), R.drawable.ic_invoice),
-            Pair(getLangString("tab_settings"), R.drawable.ic_settings)
+        val tabTitles = listOf(
+            getLangString("tab_new_wash"),
+            getLangString("tab_today"),
+            getLangString("tab_month"),
+            getLangString("tab_invoices"),
+            getLangString("tab_settings")
         )
 
         viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = fragments.size
-            override fun createFragment(position: Int) = fragments[position]
+            override fun createFragment(position: Int): Fragment = fragments[position]
         }
 
         TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
-            tab.text = tabData[pos].first
+            tab.text = tabTitles[pos]
         }.attach()
 
         // Default to first tab (new wash)
@@ -86,11 +85,31 @@ class DashboardActivity : AppCompatActivity() {
     private fun getLangString(key: String): String {
         val lang = SessionManager.getLang(this)
         return when (key) {
-            "tab_new_wash" -> when (lang) { "en" -> "New Wash"; "bn" -> "নতুন ওয়াশ"; else -> "تسجيل غسيل" }
-            "tab_today" -> when (lang) { "en" -> "Today"; "bn" -> "আজ"; else -> "اليوم" }
-            "tab_month" -> when (lang) { "en" -> "Month"; "bn" -> "মাস"; else -> "الشهر" }
-            "tab_invoices" -> when (lang) { "en" -> "Invoices"; "bn" -> "ইনভয়েস"; else -> "الفواتير" }
-            "tab_settings" -> when (lang) { "en" -> "Settings"; "bn" -> "সেটিংস"; else -> "الإعدادات" }
+            "tab_new_wash" -> when (lang) {
+                "en" -> "New Wash"
+                "bn" -> "নতুন ওয়াশ"
+                else -> "تسجيل غسيل"
+            }
+            "tab_today" -> when (lang) {
+                "en" -> "Today"
+                "bn" -> "আজ"
+                else -> "اليوم"
+            }
+            "tab_month" -> when (lang) {
+                "en" -> "Month"
+                "bn" -> "মাস"
+                else -> "الشهر"
+            }
+            "tab_invoices" -> when (lang) {
+                "en" -> "Invoices"
+                "bn" -> "ইনভয়েস"
+                else -> "الفواتير"
+            }
+            "tab_settings" -> when (lang) {
+                "en" -> "Settings"
+                "bn" -> "সেটিংস"
+                else -> "الإعدادات"
+            }
             else -> key
         }
     }
@@ -110,12 +129,7 @@ class DashboardActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try { repo.updateLanguage(lang) } catch (_: Exception) {}
         }
-        // Restart activity to apply language
         recreate()
-    }
-
-    fun loadStats() {
-        // Stats loaded within each fragment
     }
 
     override fun onResume() {
@@ -124,7 +138,7 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun doLogout() {
         lifecycleScope.launch {
-            repo.logout()
+            try { repo.logout() } catch (_: Exception) {}
             SessionManager.logout(this@DashboardActivity)
             goToLogin()
         }
