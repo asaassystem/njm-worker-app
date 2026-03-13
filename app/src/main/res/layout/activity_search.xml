@@ -1,1 +1,78 @@
-PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPExpbmVhckxheW91dAogICAgeG1sbnM6YW5kcm9pZD0iaHR0cDovL3NjaGVtYXMuYW5kcm9pZC5jb20vYXBrL3Jlcy9hbmRyb2lkIgogICAgeG1sbnM6YXBwPSJodHRwOi8vc2NoZW1hcy5hbmRyb2lkLmNvbS9hcGsvcmVzLWF1dG8iCiAgICBhbmRyb2lkOmxheW91dF93aWR0aD0ibWF0Y2hfcGFyZW50IgogICAgYW5kcm9pZDpsYXlvdXRfaGVpZ2h0PSJtYXRjaF9wYXJlbnQiCiAgICBhbmRyb2lkOm9yaWVudGF0aW9uPSJ2ZXJ0aWNhbCIKICAgIGFuZHJvaWQ6bGF5b3V0RGlyZWN0aW9uPSJydGwiCiAgICBhbmRyb2lkOmJhY2tncm91bmQ9IkBjb2xvci9iYWNrZ3JvdW5kX2xpZ2h0Ij4KCiAgICA8Y29tLmdvb2dsZS5hbmRyb2lkLm1hdGVyaWFsLmFwcGJhci5NYXRlcmlhbFRvb2xiYXIKICAgICAgICBhbmRyb2lkOmlkPSJAK2lkL3Rvb2xiYXIiCiAgICAgICAgYW5kcm9pZDpsYXlvdXRfd2lkdGg9Im1hdGNoX3BhcmVudCIKICAgICAgICBhbmRyb2lkOmxheW91dF9oZWlnaHQ9Ij9hdHRyL2FjdGlvbkJhclNpemUiCiAgICAgICAgYW5kcm9pZDpiYWNrZ3JvdW5kPSJAY29sb3IvcHJpbWFyeV9ibHVlIgogICAgICAgIGFwcDp0aXRsZVRleHRDb2xvcj0iQGFuZHJvaWQ6Y29sb3Ivd2hpdGUiCiAgICAgICAgYXBwOnRpdGxlPSJAc3RyaW5nL3NlYXJjaF9jYXIiCiAgICAgICAgYXBwOm5hdmlnYXRpb25JY29uPSJAYW5kcm9pZDpkcmF3YWJsZS9pY19tZW51X3JldmVydCIKICAgICAgICBhcHA6bmF2aWdhdGlvbkljb25UaW50PSJAYW5kcm9pZDpjb2xvci93aGl0ZSIgLz4KCiAgICA8TGluZWFyTGF5b3V0CiAgICAgICAgYW5kcm9pZDpsYXlvdXRfd2lkdGg9Im1hdGNoX3BhcmVudCIKICAgICAgICBhbmRyb2lkOmxheW91dF9oZWlnaHQ9IndyYXBfY29udGVudCIKICAgICAgICBhbmRyb2lkOm9yaWVudGF0aW9uPSJ2ZXJ0aWNhbCIKICAgICAgICBhbmRyb2lkOnBhZGRpbmc9IjE2ZHAiPgoKICAgICAgICA8IS0tIFNlYXJjaCBCb3ggLS0+CiAgICAgICAgPGNvbS5nb29nbGUuYW5kcm9pZC5tYXRlcmlhbC50ZXh0ZmllbGQuVGV4dElucHV0TGF5b3V0CiAgICAgICAgICAgIGFuZHJvaWQ6aWQ9IkAraWQvdGlsUGxhdGUiCiAgICAgICAgICAgIHN0eWxlPSJAc3R5bGUvV2lkZ2V0Lk1hdGVyaWFsQ29tcG9uZW50cy5UZXh0SW5wdXRMYXlvdXQuT3V0bGluZWRCb3giCiAgICAgICAgICAgIGFuZHJvaWQ6bGF5b3V0X3dpZHRoPSJtYXRjaF9wYXJlbnQiCiAgICAgICAgICAgIGFuZHJvaWQ6bGF5b3V0X2hlaWdodD0id3JhcF9jb250ZW50IgogICAgICAgICAgICBhbmRyb2lkOmhpbnQ9IkBzdHJpbmcvZW50ZXJfcGxhdGVfbnVtYmVyIgogICAgICAgICAgICBhcHA6Ym94Q29ybmVyUmFkaXVzVG9wU3RhcnQ9IjEyZHAiCiAgICAgICAgICAgIGFwcDpib3hDb3JuZXJSYWRpdXNUb3BFbmQ9IjEyZHAiCiAgICAgICAgICAgIGFwcDpib3hDb3JuZXJSYWRpdXNCb3R0b21TdGFydD0iMTJkcCIKICAgICAgICAgICAgYXBwOmJveENvcm5lclJhZGl1c0JvdHRvbUVuZD0iMTJkcCI+CgogICAgICAgICAgICA8Y29tLmdvb2dsZS5hbmRyb2lkLm1hdGVyaWFsLnRleHRmaWVsZC5UZXh0SW5wdXRFZGl0VGV4dAogICAgICAgICAgICAgICAgYW5kcm9pZDppZD0iQCtpZC9ldFBsYXRlTnVtYmVyIgogICAgICAgICAgICAgICAgYW5kcm9pZDpsYXlvdXRfd2lkdGg9Im1hdGNoX3BhcmVudCIKICAgICAgICAgICAgICAgIGFuZHJvaWQ6bGF5b3V0X2hlaWdodD0id3JhcF9jb250ZW50IgogICAgICAgICAgICAgICAgYW5kcm9pZDppbnB1dFR5cGU9InRleHRDYXBDaGFyYWN0ZXJzIgogICAgICAgICAgICAgICAgYW5kcm9pZDppbWVPcHRpb25zPSJhY3Rpb25TZWFyY2giCiAgICAgICAgICAgICAgICBhbmRyb2lkOnRleHRTaXplPSIxOHNwIgogICAgICAgICAgICAgICAgYW5kcm9pZDpncmF2aXR5PSJjZW50ZXIiIC8+CiAgICAgICAgPC9jb20uZ29vZ2xlLmFuZHJvaWQubWF0ZXJpYWwudGV4dGZpZWxkLlRleHRJbnB1dExheW91dD4KCiAgICAgICAgPGNvbS5nb29nbGUuYW5kcm9pZC5tYXRlcmlhbC5idXR0b24uTWF0ZXJpYWxCdXR0b24KICAgICAgICAgICAgYW5kcm9pZDppZD0iQCtpZC9idG5TZWFyY2giCiAgICAgICAgICAgIGFuZHJvaWQ6bGF5b3V0X3dpZHRoPSJtYXRjaF9wYXJlbnQiCiAgICAgICAgICAgIGFuZHJvaWQ6bGF5b3V0X2hlaWdodD0iNTZkcCIKICAgICAgICAgICAgYW5kcm9pZDpsYXlvdXRfbWFyZ2luVG9wPSIxMmRwIgogICAgICAgICAgICBhbmRyb2lkOnRleHQ9IkBzdHJpbmcvc2VhcmNoIgogICAgICAgICAgICBhbmRyb2lkOnRleHRTaXplPSIxNnNwIgogICAgICAgICAgICBhbmRyb2lkOmJhY2tncm91bmRUaW50PSJAY29sb3IvcHJpbWFyeV9ibHVlIgogICAgICAgICAgICBhcHA6Y29ybmVyUmFkaXVzPSIxMmRwIiAvPgogICAgPC9MaW5lYXJMYXlvdXQ+CgogICAgPCEtLSBQcm9ncmVzcyBCYXIgLS0+CiAgICA8UHJvZ3Jlc3NCYXIKICAgICAgICBhbmRyb2lkOmlkPSJAK2lkL3Byb2dyZXNzQmFyIgogICAgICAgIGFuZHJvaWQ6bGF5b3V0X3dpZHRoPSJ3cmFwX2NvbnRlbnQiCiAgICAgICAgYW5kcm9pZDpsYXlvdXRfaGVpZ2h0PSJ3cmFwX2NvbnRlbnQiCiAgICAgICAgYW5kcm9pZDpsYXlvdXRfZ3Jhdml0eT0iY2VudGVyX2hvcml6b250YWwiCiAgICAgICAgYW5kcm9pZDp2aXNpYmlsaXR5PSJnb25lIiAvPgoKICAgIDwhLS0gUmVzdWx0cyAtLT4KICAgIDxhbmRyb2lkeC5yZWN5Y2xlcnZpZXcud2lkZ2V0LlJlY3ljbGVyVmlldwogICAgICAgIGFuZHJvaWQ6aWQ9IkAraWQvcnZDYXJzIgogICAgICAgIGFuZHJvaWQ6bGF5b3V0X3dpZHRoPSJtYXRjaF9wYXJlbnQiCiAgICAgICAgYW5kcm9pZDpsYXlvdXRfaGVpZ2h0PSIwZHAiCiAgICAgICAgYW5kcm9pZDpsYXlvdXRfd2VpZ2h0PSIxIgogICAgICAgIGFuZHJvaWQ6cGFkZGluZz0iOGRwIiAvPgoKICAgIDwhLS0gTm8gUmVzdWx0cyAtLT4KICAgIDxUZXh0VmlldwogICAgICAgIGFuZHJvaWQ6aWQ9IkAraWQvdHZOb1Jlc3VsdHMiCiAgICAgICAgYW5kcm9pZDpsYXlvdXRfd2lkdGg9Im1hdGNoX3BhcmVudCIKICAgICAgICBhbmRyb2lkOmxheW91dF9oZWlnaHQ9IndyYXBfY29udGVudCIKICAgICAgICBhbmRyb2lkOnRleHQ9IkBzdHJpbmcvbm9fY2Fyc19mb3VuZCIKICAgICAgICBhbmRyb2lkOnRleHRTaXplPSIxNnNwIgogICAgICAgIGFuZHJvaWQ6dGV4dENvbG9yPSJAY29sb3IvdGV4dF9zZWNvbmRhcnkiCiAgICAgICAgYW5kcm9pZDpncmF2aXR5PSJjZW50ZXIiCiAgICAgICAgYW5kcm9pZDpwYWRkaW5nPSIzMmRwIgogICAgICAgIGFuZHJvaWQ6dmlzaWJpbGl0eT0iZ29uZSIgLz4KCjwvTGluZWFyTGF5b3V0Pg==
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layoutDirection="rtl"
+    android:background="@color/background_light">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary_blue"
+        app:titleTextColor="@android:color/white"
+        app:title="@string/search_car"
+        app:navigationIconTint="@android:color/white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPlate"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_plate_number">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPlateNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapCharacters"
+                android:imeOptions="actionSearch"
+                android:textSize="18sp"
+                android:gravity="center" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSearch"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/search"
+            android:textSize="16sp"
+            android:backgroundTint="@color/primary_blue"
+            app:cornerRadius="12dp" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCars"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp" />
+
+    <TextView
+        android:id="@+id/tvNoResults"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_cars_found"
+        android:textSize="16sp"
+        android:textColor="@color/text_secondary"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone" />
+
+</LinearLayout>
