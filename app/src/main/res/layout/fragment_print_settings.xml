@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F5F5"
     android:layoutDirection="rtl">
 
     <LinearLayout
@@ -10,132 +11,440 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Print Settings"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#1565C0"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Print Method -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Print Method:"
-            android:textColor="#333333"
-            android:layout_marginBottom="4dp"/>
-
-        <RadioGroup
-            android:id="@+id/rgPrintMethod"
+        <!-- NJM Header with Logo -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:gravity="center_vertical"
+            android:background="#1a2744"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
 
-            <RadioButton
-                android:id="@+id/rbSunmiBuiltin"
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/njm_logo"
+                android:contentDescription="NJM"
+                android:layout_marginEnd="12dp" />
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Sunmi Builtin"
-                android:checked="true"/>
+                android:orientation="vertical">
 
-            <RadioButton
-                android:id="@+id/rbNetworkPrinter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Network Printer"/>
-        </RadioGroup>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="إعدادات الطباعة"
+                    android:textColor="#c9a227"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-        <!-- Network Printer Settings -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Print Settings"
+                    android:textColor="#AAAAAA"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Sunmi Printer Status Card -->
         <LinearLayout
-            android:id="@+id/layoutNetworkPrinter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp"
+            android:elevation="2dp">
 
-            <com.google.android.material.textfield.TextInputLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Printer IP (e.g. 192.168.1.100)"
-                android:layout_marginBottom="8dp">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etPrinterIp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:text="🖨 حالة الطابعة | Printer Status"
+                android:textColor="#1a2744"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
 
-            <com.google.android.material.textfield.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Printer Port (default: 9100)"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:layout_marginBottom="8dp">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etPrinterPort"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="9100"
-                    android:inputType="number"/>
-            </com.google.android.material.textfield.TextInputLayout>
 
+                <TextView
+                    android:id="@+id/tvPrinterStatus"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="⏳ جاري الفحص..."
+                    android:textColor="#FF9800"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/btnDetectPrinter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="فحص | Detect"
+                    android:textSize="12sp"
+                    android:backgroundTint="#1a2744"
+                    android:textColor="#c9a227"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvSunmiModel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="الجهاز: Sunmi V2s"
+                android:textColor="#666666"
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Auto Print Toggle -->
+        <!-- Print Method Selection -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp">
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp"
+            android:elevation="2dp">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Auto-print after wash:"
-                android:textColor="#333333"
-                android:gravity="center_vertical"/>
+                android:text="طريقة الطباعة | Print Method"
+                android:textColor="#1a2744"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switchAutoPrint"
-                android:layout_width="wrap_content"
+            <RadioGroup
+                android:id="@+id/rgPrintMethod"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="true"/>
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbSunmiBuiltin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sunmi مدمج"
+                    android:textColor="#333333"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/rbNetworkPrinter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="شبكة Network"
+                    android:textColor="#333333" />
+            </RadioGroup>
+
+            <!-- Network Settings (hidden by default) -->
+            <LinearLayout
+                android:id="@+id/layoutNetworkPrinter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="IP الطابعة (مثال: 192.168.1.100)"
+                    android:layout_marginBottom="8dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPrinterIp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="المنفذ Port (افتراضي: 9100)"
+                    android:layout_marginBottom="8dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPrinterPort"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="9100"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- Org Info -->
+        <!-- Auto Print Settings -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp"
+            android:elevation="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="إعدادات الطباعة التلقائية"
+                android:textColor="#1a2744"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="طباعة تلقائية بعد الغسيل"
+                    android:textColor="#333333" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchAutoPrint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="طباعة الفاتورة مع الإيصال"
+                    android:textColor="#333333" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchPrintInvoice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ZATCA Invoice Settings -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp"
+            android:elevation="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="إعدادات الفاتورة - هيئة الزكاة والضريبة"
+                android:textColor="#1a2744"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ZATCA Invoice Settings (VAT 15%)"
+                android:textColor="#888888"
+                android:textSize="11sp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Org Name -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="اسم المنشأة | Organization Name"
+                android:layout_marginBottom="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etInvoiceOrgName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="مغسلة نجم" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- VAT Number -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="الرقم الضريبي | VAT Number (15 digits)"
+                android:layout_marginBottom="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etVatNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="15" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Commercial Registration -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="السجل التجاري | CR Number"
+                android:layout_marginBottom="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCrNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Address -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="العنوان | Address"
+                android:layout_marginBottom="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="حفر الباطن، المنطقة الشرقية" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- VAT Rate Display -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#FFF8E1"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="نسبة ضريبة القيمة المضافة | VAT Rate"
+                    android:textColor="#555555"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15%"
+                    android:textColor="#c9a227"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Paper Size Settings -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp"
+            android:elevation="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="مقاسات الورق | Paper Size"
+                android:textColor="#1a2744"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/rgPaperSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/rb58mm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="58mm - Sunmi V2s (افتراضي)"
+                    android:textColor="#333333"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/rb80mm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="80mm - طابعات أخرى"
+                    android:textColor="#333333" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <!-- Org Info Display -->
         <TextView
             android:id="@+id/tvOrgInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Org: Loading..."
+            android:text="المنشأة: جاري التحميل..."
             android:textColor="#666666"
-            android:textSize="13sp"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
 
         <!-- Save Button -->
         <Button
             android:id="@+id/btnSaveSettings"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="Save Settings"
-            android:backgroundTint="#1565C0"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="8dp"/>
+            android:layout_height="52dp"
+            android:text="حفظ الإعدادات | Save Settings"
+            android:backgroundTint="#1a2744"
+            android:textColor="#c9a227"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
 
         <!-- Test Print Button -->
         <Button
             android:id="@+id/btnTestPrint"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="Test Print"
+            android:layout_height="52dp"
+            android:text="طباعة تجريبية | Test Print"
             android:backgroundTint="#4CAF50"
-            android:textColor="#FFFFFF"/>
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Developer Credit -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="meshari.tech"
+            android:textColor="#AAAAAA"
+            android:textSize="10sp"
+            android:gravity="center"
+            android:paddingBottom="8dp" />
 
     </LinearLayout>
 </ScrollView>
