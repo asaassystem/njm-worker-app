@@ -1,39 +1,38 @@
 package com.njm.worker.ui.dashboard
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.njm.worker.R
 import com.njm.worker.data.model.WashRecord
-import com.njm.worker.databinding.ItemWashRecordBinding
 
-class WashRecordAdapter : ListAdapter<WashRecord, WashRecordAdapter.ViewHolder>(DIFF) {
+class WashRecordAdapter(private val items: List<WashRecord>) :
+    RecyclerView.Adapter<WashRecordAdapter.ViewHolder>() {
 
-    class ViewHolder(val binding: ItemWashRecordBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvPlate: TextView = view.findViewById(R.id.tvPlateNumber)
+        val tvType: TextView = view.findViewById(R.id.tvCarType)
+        val tvTime: TextView = view.findViewById(R.id.tvWashTime)
+        val tvCost: TextView = view.findViewById(R.id.tvCost)
+        val tvPaid: TextView = view.findViewById(R.id.tvPaidStatus)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemWashRecordBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_wash_record, parent, false)
+        return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
-        with(holder.binding) {
-            tvPlate.text = item.plate_number
-            tvOrg.text = item.org_name
-            tvType.text = item.car_type_label()
-            tvPrice.text = String.format("%.2f ر.س", item.cost)
-            tvTime.text = item.wash_time_fmt
-        }
+        val item = items[position]
+        holder.tvPlate.text = item.plateNumber ?: "-"
+        holder.tvType.text = item.carType ?: "-"
+        holder.tvTime.text = item.washDate ?: ""
+        holder.tvCost.text = (item.cost ?: 0.0).toString()
+        holder.tvPaid.text = if (item.isPaid == true) "Paid" else "Unpaid"
     }
 
-    companion object {
-        val DIFF = object : DiffUtil.ItemCallback<WashRecord>() {
-            override fun areItemsTheSame(a: WashRecord, b: WashRecord) = a.id == b.id
-            override fun areContentsTheSame(a: WashRecord, b: WashRecord) = a == b
-        }
-    }
+    override fun getItemCount() = items.size
 }
-
-fun WashRecord.car_type_label() = if (car_type == "large") "كبير" else "صغير"
