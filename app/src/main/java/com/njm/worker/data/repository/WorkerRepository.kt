@@ -4,55 +4,54 @@ import com.njm.worker.data.api.ApiClient
 import com.njm.worker.data.model.*
 
 class WorkerRepository {
-    private val api = ApiClient.apiService
+    private val api = ApiClient.service
 
-    suspend fun loginWithPin(pin: String): Result<LoginResponse> {
+    suspend fun login(pin: String): Result<LoginResponse> {
         return try {
-            val r = api.loginWithPin(pin)
-            if (r.isSuccessful && r.body() != null) {
-                val body = r.body()!!
-                if (body.success) Result.success(body)
-                else Result.failure(Exception(body.message ?: "Login failed"))
-            } else {
-                Result.failure(Exception("Network error: " + r.code()))
-            }
-        } catch (e: Exception) { Result.failure(e) }
-    }
-
-    suspend fun getWorkerInfo(): Result<WorkerInfo> {
-        return try {
-            val r = api.getWorkerInfo()
+            val r = api.loginWithPin(LoginRequest(pin = pin))
             if (r.isSuccessful && r.body() != null) Result.success(r.body()!!)
-            else Result.failure(Exception("Failed to get info"))
-        } catch (e: Exception) { Result.failure(e) }
+            else Result.failure(Exception(r.body()?.message ?: "Login failed: " + r.code()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     suspend fun searchCar(plate: String): Result<SearchResponse> {
         return try {
             val r = api.searchCar(plate)
             if (r.isSuccessful && r.body() != null) Result.success(r.body()!!)
-            else Result.failure(Exception("Search failed"))
-        } catch (e: Exception) { Result.failure(e) }
+            else Result.failure(Exception(r.body()?.message ?: "Search failed: " + r.code()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     suspend fun recordWash(carId: Int): Result<WashResponse> {
         return try {
-            val r = api.recordWash(carId)
+            val r = api.recordWash(RecordWashRequest(carId = carId))
             if (r.isSuccessful && r.body() != null) Result.success(r.body()!!)
-            else Result.failure(Exception("Failed to record wash"))
-        } catch (e: Exception) { Result.failure(e) }
+            else Result.failure(Exception(r.body()?.message ?: "Record failed: " + r.code()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     suspend fun getTodayWashes(): Result<TodayWashesResponse> {
         return try {
             val r = api.getTodayWashes()
             if (r.isSuccessful && r.body() != null) Result.success(r.body()!!)
-            else Result.failure(Exception("Failed to get washes"))
-        } catch (e: Exception) { Result.failure(e) }
+            else Result.failure(Exception("Failed: " + r.code()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    suspend fun logout(): Result<Unit> {
-        return try { api.logout(); Result.success(Unit) }
-        catch (e: Exception) { Result.failure(e) }
+    suspend fun logout(): Result<Boolean> {
+        return try {
+            api.logout()
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.success(true)
+        }
     }
 }
