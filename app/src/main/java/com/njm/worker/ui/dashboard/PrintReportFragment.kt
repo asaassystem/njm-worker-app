@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -25,14 +26,20 @@ class PrintReportFragment : Fragment() {
 
         val rgReportType = view.findViewById<RadioGroup>(R.id.rgReportType)
         val btnPrintReport = view.findViewById<Button>(R.id.btnPrintReport)
+        val tvCount = view.findViewById<TextView>(R.id.tvReportCount)
+        val tvTotal = view.findViewById<TextView>(R.id.tvReportTotal)
+        val tvPaid = view.findViewById<TextView>(R.id.tvReportPaid)
+        val tvUnpaid = view.findViewById<TextView>(R.id.tvReportUnpaid)
+        val cardSummary = view.findViewById<View>(R.id.cardSummary)
 
         btnPrintReport.setOnClickListener {
             val isDaily = rgReportType.checkedRadioButtonId == R.id.rbToday
-            if (isDaily) printDailyReport() else printMonthlyReport()
+            if (isDaily) printDailyReport(tvCount, tvTotal, tvPaid, tvUnpaid, cardSummary)
+            else printMonthlyReport(tvCount, tvTotal, tvPaid, tvUnpaid, cardSummary)
         }
     }
 
-    private fun printDailyReport() {
+    private fun printDailyReport(tvCount: TextView?, tvTotal: TextView?, tvPaid: TextView?, tvUnpaid: TextView?, cardSummary: View?) {
         lifecycleScope.launch {
             repo.getTodayWashes().onSuccess { data ->
                 val washes = data.washes ?: emptyList()
@@ -44,7 +51,13 @@ class PrintReportFragment : Fragment() {
                 val total = washes.sumOf { it.cost ?: 0.0 }
                 val paid = washes.filter { (it.isPaid ?: 1) == 1 }.sumOf { it.cost ?: 0.0 }
                 val unpaid = washes.filter { (it.isPaid ?: 1) == 0 }.sumOf { it.cost ?: 0.0 }
-                PrintManager.printDailyReport(act, washes, total, paid, unpaid, "اليوم")
+                // Update summary card
+                tvCount?.text = washes.size.toString()
+                tvTotal?.text = String.format("%.2f", total)
+                tvPaid?.text = String.format("%.2f", paid)
+                tvUnpaid?.text = String.format("%.2f", unpaid)
+                cardSummary?.visibility = View.VISIBLE
+                PrintManager.printDailyReport(act, washes, total, paid, unpaid)
             }.also {
                 repo.getTodayWashes().onFailure {
                     Toast.makeText(requireContext(), "خطأ في تحميل البيانات", Toast.LENGTH_SHORT).show()
@@ -53,7 +66,7 @@ class PrintReportFragment : Fragment() {
         }
     }
 
-    private fun printMonthlyReport() {
+    private fun printMonthlyReport(tvCount: TextView?, tvTotal: TextView?, tvPaid: TextView?, tvUnpaid: TextView?, cardSummary: View?) {
         lifecycleScope.launch {
             repo.getMonthWashes().onSuccess { data ->
                 val washes = data.washes ?: emptyList()
@@ -65,7 +78,13 @@ class PrintReportFragment : Fragment() {
                 val total = washes.sumOf { it.cost ?: 0.0 }
                 val paid = washes.filter { (it.isPaid ?: 1) == 1 }.sumOf { it.cost ?: 0.0 }
                 val unpaid = washes.filter { (it.isPaid ?: 1) == 0 }.sumOf { it.cost ?: 0.0 }
-                PrintManager.printDailyReport(act, washes, total, paid, unpaid, "الشهر")
+                // Update summary card
+                tvCount?.text = washes.size.toString()
+                tvTotal?.text = String.format("%.2f", total)
+                tvPaid?.text = String.format("%.2f", paid)
+                tvUnpaid?.text = String.format("%.2f", unpaid)
+                cardSummary?.visibility = View.VISIBLE
+                PrintManager.printMonthlyReport(act, washes, total, paid, unpaid)
             }
         }
     }
