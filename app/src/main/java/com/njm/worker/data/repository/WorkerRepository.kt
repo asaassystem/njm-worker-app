@@ -1,46 +1,58 @@
 package com.njm.worker.data.repository
 
 import com.njm.worker.data.api.ApiClient
-import com.njm.worker.data.api.NjmApiService
 import com.njm.worker.data.model.*
-import com.njm.worker.utils.SessionManager
 
 class WorkerRepository {
-    private val api: NjmApiService = ApiClient.retrofit.create(NjmApiService::class.java)
+    private val api = ApiClient.apiService
 
-    suspend fun login(pin: String): Result<Boolean> = runCatching {
-        val response = api.pinLogin(PinLoginRequest(pin))
-        if (response.success) {
-            try {
-                val info = api.getWorkerInfo()
-                SessionManager.isLoggedIn = true
-                SessionManager.workerName = info.name
-                SessionManager.orgId = info.org_id ?: 0
-            } catch (e: Exception) {
-                SessionManager.isLoggedIn = true
+    suspend fun loginWithPin(pin: String): Result<LoginResponse> {
+        return try {
+            val r = api.loginWithPin(pin)
+            if (r.isSuccessful && r.body() != null) {
+                val body = r.body()!!
+                if (body.success) Result.success(body)
+                else Result.failure(Exception(body.message ?: "Login failed"))
+            } else {
+                Result.failure(Exception("Network error: " + r.code()))
             }
-            true
-        } else {
-            throw Exception(response.message ?: "PIN غير صحيح")
-        }
+        } catch (e: Exception) { Result.failure(e) }
     }
 
-    suspend fun searchCar(plate: String): Result<List<Car>> = runCatching {
-        val response = api.searchCar(plate)
-        response.cars ?: emptyList()
+    suspend fun getWorkerInfo(): Result<WorkerInfo> {
+        return try {
+            val r = api.getWorkerInfo()
+            if (r.isSuccessful && r.body() != null) Result.success(r.body()!!)
+            else Result.failure(Exception("Failed to get info"))
+        } catch (e: Exception) { Result.failure(e) }
     }
 
-    suspend fun recordWash(carId: Int, isPaid: Int = 1, notes: String = ""): Result<RecordWashResponse> = runCatching {
-        api.recordWash(RecordWashRequest(carId, isPaid, notes))
+    suspend fun searchCar(plate: String): Result<SearchResponse> {
+        return try {
+            val r = api.searchCar(plate)
+            if (r.isSuccessful && r.body() != null) Result.success(r.body()!!)
+            else Result.failure(Exception("Search failed"))
+        } catch (e: Exception) { Result.failure(e) }
     }
 
-    suspend fun getTodayWashes(): Result<TodayWashesResponse> = runCatching {
-        api.getTodayWashes()
+    suspend fun recordWash(carId: Int): Result<WashResponse> {
+        return try {
+            val r = api.recordWash(carId)
+            if (r.isSuccessful && r.body() != null) Result.success(r.body()!!)
+            else Result.failure(Exception("Failed to record wash"))
+        } catch (e: Exception) { Result.failure(e) }
     }
 
-    suspend fun logout(): Result<Unit> = runCatching {
-        try { api.logout() } catch (e: Exception) { /* ignore */ }
-        SessionManager.clear()
-        ApiClient.clearSession()
+    suspend fun getTodayWashes(): Result<TodayWashesResponse> {
+        return try {
+            val r = api.getTodayWashes()
+            if (r.isSuccessful && r.body() != null) Result.success(r.body()!!)
+            else Result.failure(Exception("Failed to get washes"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun logout(): Result<Unit> {
+        return try { api.logout(); Result.success(Unit) }
+        catch (e: Exception) { Result.failure(e) }
     }
 }
