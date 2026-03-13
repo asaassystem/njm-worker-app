@@ -25,10 +25,10 @@ interface NjmApiService {
     @POST("api/worker/record-wash")
     suspend fun recordWash(@Body request: RecordWashRequest): Response<WashResponse>
 
-    @GET("api/worker/today-washes")
+    @GET("api/worker/today-washes-v2")
     suspend fun getTodayWashes(): Response<TodayWashesResponse>
 
-    @GET("api/worker/month-washes")
+    @GET("api/worker/month-washes-v2")
     suspend fun getMonthWashes(): Response<MonthWashesResponse>
 
     @POST("api/worker/update-payment")
