@@ -1,1 +1,39 @@
-PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHJlc291cmNlcz4KCiAgICA8c3R5bGUgbmFtZT0iVGhlbWUuTmptV29ya2VyIiBwYXJlbnQ9IlRoZW1lLk1hdGVyaWFsQ29tcG9uZW50cy5EYXlOaWdodC5EYXJrQWN0aW9uQmFyIj4KICAgICAgICA8aXRlbSBuYW1lPSJjb2xvclByaW1hcnkiPkBjb2xvci9wcmltYXJ5X2JsdWU8L2l0ZW0+CiAgICAgICAgPGl0ZW0gbmFtZT0iY29sb3JQcmltYXJ5VmFyaWFudCI+QGNvbG9yL3ByaW1hcnlfYmx1ZV9kYXJrPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9ImNvbG9yT25QcmltYXJ5Ij5AYW5kcm9pZDpjb2xvci93aGl0ZTwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJjb2xvclNlY29uZGFyeSI+QGNvbG9yL3N1Y2Nlc3NfZ3JlZW48L2l0ZW0+CiAgICAgICAgPGl0ZW0gbmFtZT0iY29sb3JTZWNvbmRhcnlWYXJpYW50Ij5AY29sb3Ivc3VjY2Vzc19ncmVlbjwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJjb2xvck9uU2Vjb25kYXJ5Ij5AYW5kcm9pZDpjb2xvci93aGl0ZTwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOmNvbG9yQmFja2dyb3VuZCI+QGNvbG9yL2JhY2tncm91bmRfbGlnaHQ8L2l0ZW0+CiAgICAgICAgPGl0ZW0gbmFtZT0iY29sb3JTdXJmYWNlIj5AY29sb3Ivc3VyZmFjZV93aGl0ZTwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJjb2xvckVycm9yIj5AY29sb3IvZXJyb3JfcmVkPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9IndpbmRvd0FjdGlvbkJhciI+ZmFsc2U8L2l0ZW0+CiAgICAgICAgPGl0ZW0gbmFtZT0id2luZG93Tm9UaXRsZSI+dHJ1ZTwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOmZvbnRGYW1pbHkiPkBmb250L2NhaXJvPC9pdGVtPgogICAgPC9zdHlsZT4KCiAgICA8c3R5bGUgbmFtZT0iVGhlbWUuTmptV29ya2VyLk5vQWN0aW9uQmFyIj4KICAgICAgICA8aXRlbSBuYW1lPSJ3aW5kb3dBY3Rpb25CYXIiPmZhbHNlPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9IndpbmRvd05vVGl0bGUiPnRydWU8L2l0ZW0+CiAgICA8L3N0eWxlPgoKICAgIDxzdHlsZSBuYW1lPSJUaGVtZS5Oam1Xb3JrZXIuQXBwQmFyT3ZlcmxheSIgcGFyZW50PSJUaGVtZU92ZXJsYXkuQXBwQ29tcGF0LkRhcmsuQWN0aW9uQmFyIiAvPgoKICAgIDxzdHlsZSBuYW1lPSJUaGVtZS5Oam1Xb3JrZXIuUG9wdXBPdmVybGF5IiBwYXJlbnQ9IlRoZW1lT3ZlcmxheS5BcHBDb21wYXQuTGlnaHQiIC8+CgogICAgPCEtLSBQSU4gQnV0dG9uIFN0eWxlIC0tPgogICAgPHN0eWxlIG5hbWU9IlBpbkJ1dHRvblN0eWxlIiBwYXJlbnQ9IldpZGdldC5NYXRlcmlhbENvbXBvbmVudHMuQnV0dG9uLk91dGxpbmVkQnV0dG9uIj4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOmxheW91dF93aWR0aCI+NzJkcDwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOmxheW91dF9oZWlnaHQiPjcyZHA8L2l0ZW0+CiAgICAgICAgPGl0ZW0gbmFtZT0iYW5kcm9pZDp0ZXh0U2l6ZSI+MjRzcDwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOnRleHRTdHlsZSI+Ym9sZDwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOnRleHRDb2xvciI+QGNvbG9yL3RleHRfcHJpbWFyeTwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhcHA6Y29ybmVyUmFkaXVzIj4zNmRwPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9ImFwcDpzdHJva2VDb2xvciI+QGNvbG9yL2RpdmlkZXI8L2l0ZW0+CiAgICAgICAgPGl0ZW0gbmFtZT0iYW5kcm9pZDpsYXlvdXRfbWFyZ2luIj42ZHA8L2l0ZW0+CiAgICA8L3N0eWxlPgoKPC9yZXNvdXJjZXM+
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.NjmWorker" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/primary_blue</item>
+        <item name="colorPrimaryVariant">@color/primary_blue_dark</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">@color/success_green</item>
+        <item name="colorSecondaryVariant">@color/success_green</item>
+        <item name="colorOnSecondary">@android:color/white</item>
+        <item name="android:colorBackground">@color/background_light</item>
+        <item name="colorSurface">@color/surface_white</item>
+        <item name="colorError">@color/error_red</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.NjmWorker.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.NjmWorker.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.NjmWorker.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- PIN Button Style -->
+    <style name="PinButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_width">72dp</item>
+        <item name="android:layout_height">72dp</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="app:cornerRadius">36dp</item>
+        <item name="app:strokeColor">@color/divider</item>
+        <item name="android:layout_margin">6dp</item>
+    </style>
+
+</resources>
