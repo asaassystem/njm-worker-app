@@ -1,25 +1,34 @@
 package com.njm.worker.data.api
 
 import com.njm.worker.data.model.*
+import retrofit2.Response
 import retrofit2.http.*
 
 interface NjmApiService {
 
     @POST("api/worker-pin-login")
-    suspend fun pinLogin(@Body request: PinLoginRequest): PinLoginResponse
+    @FormUrlEncoded
+    suspend fun loginWithPin(
+        @Field("pin") pin: String
+    ): Response<LoginResponse>
 
     @GET("api/worker/info")
-    suspend fun getWorkerInfo(): WorkerInfoResponse
+    suspend fun getWorkerInfo(): Response<WorkerInfo>
 
     @GET("api/worker/search-car")
-    suspend fun searchCar(@Query("plate") plate: String): SearchCarResponse
+    suspend fun searchCar(
+        @Query("plate") plate: String
+    ): Response<SearchResponse>
 
     @POST("api/worker/record-wash")
-    suspend fun recordWash(@Body request: RecordWashRequest): RecordWashResponse
+    @FormUrlEncoded
+    suspend fun recordWash(
+        @Field("car_id") carId: Int
+    ): Response<WashResponse>
 
     @GET("api/worker/today-washes")
-    suspend fun getTodayWashes(): TodayWashesResponse
+    suspend fun getTodayWashes(): Response<TodayWashesResponse>
 
     @POST("api/worker/logout")
-    suspend fun logout(): BaseResponse
+    suspend fun logout(): Response<LoginResponse>
 }
