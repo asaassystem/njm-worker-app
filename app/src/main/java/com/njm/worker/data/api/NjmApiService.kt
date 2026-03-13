@@ -30,6 +30,7 @@ interface NjmApiService {
     @GET("api/worker/settings")
     suspend fun getSettings(): Response<SettingsResponse>
 
+    
     // Logout
     @POST("api/worker/logout")
     suspend fun logout(): Response<LogoutResponse>
