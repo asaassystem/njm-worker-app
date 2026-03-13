@@ -1,81 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
     android:layoutDirection="rtl"
-    android:background="@color/white">
+    android:background="@color/primary_blue"
+    android:gravity="center">
 
     <TextView
-        android:id="@+id/tvAppName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="نظام NGM Plus"
-        android:textSize="24sp"
+        android:text="NJM Worker"
+        android:textSize="28sp"
         android:textStyle="bold"
-        android:textColor="@color/primary"
-        android:layout_marginBottom="8dp"/>
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="أدخل كود الدخول"
+        android:text="@string/enter_pin"
         android:textSize="16sp"
-        android:textColor="@color/gray"
-        android:layout_marginBottom="32dp"/>
+        android:textColor="#CCFFFFFF"
+        android:layout_marginBottom="32dp" />
 
-    <TextView
-        android:id="@+id/tvPinDots"
+    <!-- PIN Dots Display -->
+    <LinearLayout
+        android:id="@+id/pinDotsLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="○ ○ ○ ○"
-        android:textSize="32sp"
-        android:letterSpacing="0.3"
-        android:layout_marginBottom="16dp"/>
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
+
+        <TextView android:id="@+id/dot1" android:layout_width="40dp" android:layout_height="40dp"
+            android:text="@string/pin_dot_empty" android:textSize="24sp" android:textColor="#CCFFFFFF" android:gravity="center" />
+        <TextView android:id="@+id/dot2" android:layout_width="40dp" android:layout_height="40dp"
+            android:text="@string/pin_dot_empty" android:textSize="24sp" android:textColor="#CCFFFFFF" android:gravity="center" />
+        <TextView android:id="@+id/dot3" android:layout_width="40dp" android:layout_height="40dp"
+            android:text="@string/pin_dot_empty" android:textSize="24sp" android:textColor="#CCFFFFFF" android:gravity="center" />
+        <TextView android:id="@+id/dot4" android:layout_width="40dp" android:layout_height="40dp"
+            android:text="@string/pin_dot_empty" android:textSize="24sp" android:textColor="#CCFFFFFF" android:gravity="center" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:textColor="@android:color/holo_red_dark"
-        android:visibility="gone"
-        android:layout_marginBottom="16dp"/>
+        android:textColor="#FFEB3B"
+        android:textSize="14sp"
+        android:layout_marginBottom="24dp"
+        android:visibility="gone" />
+
+    <!-- Number Pad -->
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/btn1" android:layout_width="80dp" android:layout_height="80dp" android:text="1" android:textSize="24sp" android:backgroundTint="#33FFFFFF" android:layout_margin="6dp" />
+            <Button android:id="@+id/btn2" android:layout_width="80dp" android:layout_height="80dp" android:text="2" android:textSize="24sp" android:backgroundTint="#33FFFFFF" android:layout_margin="6dp" />
+            <Button android:id="@+id/btn3" android:layout_width="80dp" android:layout_height="80dp" android:text="3" android:textSize="24sp" android:backgroundTint="#33FFFFFF" android:layout_margin="6dp" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/btn4" android:layout_width="80dp" android:layout_height="80dp" android:text="4" android:textSize="24sp" android:backgroundTint="#33FFFFFF" android:layout_margin="6dp" />
+            <Button android:id="@+id/btn5" android:layout_width="80dp" android:layout_height="80dp" android:text="5" android:textSize="24sp" android:backgroundTint="#33FFFFFF" android:layout_margin="6dp" />
+            <Button android:id="@+id/btn6" android:layout_width="80dp" android:layout_height="80dp" android:text="6" android:textSize="24sp" android:backgroundTint="#33FFFFFF" android:layout_margin="6dp" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/btn7" android:layout_width="80dp" android:layout_height="80dp" android:text="7" android:textSize="24sp" android:backgroundTint="#33FFFFFF" android:layout_margin="6dp" />
+            <Button android:id="@+id/btn8" android:layout_width="80dp" android:layout_height="80dp" android:text="8" android:textSize="24sp" android:backgroundTint="#33FFFFFF" android:layout_margin="6dp" />
+            <Button android:id="@+id/btn9" android:layout_width="80dp" android:layout_height="80dp" android:text="9" android:textSize="24sp" android:backgroundTint="#33FFFFFF" android:layout_margin="6dp" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/btnDelete" android:layout_width="80dp" android:layout_height="80dp" android:text="&#x232B;" android:textSize="20sp" android:backgroundTint="#33FFFFFF" android:layout_margin="6dp" />
+            <Button android:id="@+id/btn0" android:layout_width="80dp" android:layout_height="80dp" android:text="0" android:textSize="24sp" android:backgroundTint="#33FFFFFF" android:layout_margin="6dp" />
+            <Button android:id="@+id/btnLogin" android:layout_width="80dp" android:layout_height="80dp" android:text="@string/login" android:textSize="14sp" android:backgroundTint="#4CAF50" android:layout_margin="6dp" />
+        </LinearLayout>
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
 
-    <LinearLayout
-        android:id="@+id/numpadLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center">
-            <Button android:id="@+id/btn1" android:layout_width="80dp" android:layout_height="64dp" android:text="1" android:textSize="22sp" android:layout_margin="4dp"/>
-            <Button android:id="@+id/btn2" android:layout_width="80dp" android:layout_height="64dp" android:text="2" android:textSize="22sp" android:layout_margin="4dp"/>
-            <Button android:id="@+id/btn3" android:layout_width="80dp" android:layout_height="64dp" android:text="3" android:textSize="22sp" android:layout_margin="4dp"/>
-        </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center">
-            <Button android:id="@+id/btn4" android:layout_width="80dp" android:layout_height="64dp" android:text="4" android:textSize="22sp" android:layout_margin="4dp"/>
-            <Button android:id="@+id/btn5" android:layout_width="80dp" android:layout_height="64dp" android:text="5" android:textSize="22sp" android:layout_margin="4dp"/>
-            <Button android:id="@+id/btn6" android:layout_width="80dp" android:layout_height="64dp" android:text="6" android:textSize="22sp" android:layout_margin="4dp"/>
-        </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center">
-            <Button android:id="@+id/btn7" android:layout_width="80dp" android:layout_height="64dp" android:text="7" android:textSize="22sp" android:layout_margin="4dp"/>
-            <Button android:id="@+id/btn8" android:layout_width="80dp" android:layout_height="64dp" android:text="8" android:textSize="22sp" android:layout_margin="4dp"/>
-            <Button android:id="@+id/btn9" android:layout_width="80dp" android:layout_height="64dp" android:text="9" android:textSize="22sp" android:layout_margin="4dp"/>
-        </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center">
-            <Button android:id="@+id/btnDelete" android:layout_width="80dp" android:layout_height="64dp" android:text="⌫" android:textSize="22sp" android:layout_margin="4dp" android:backgroundTint="@android:color/holo_red_light"/>
-            <Button android:id="@+id/btn0" android:layout_width="80dp" android:layout_height="64dp" android:text="0" android:textSize="22sp" android:layout_margin="4dp"/>
-            <Button android:id="@+id/btnConfirm" android:layout_width="80dp" android:layout_height="64dp" android:text="✓" android:textSize="22sp" android:layout_margin="4dp" android:backgroundTint="@color/primary"/>
-        </LinearLayout>
-    </LinearLayout>
 </LinearLayout>
