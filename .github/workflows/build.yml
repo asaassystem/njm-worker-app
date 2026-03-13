@@ -45,12 +45,18 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v62
-        name: "NJM Worker v62 - Fix JSON Content-Type"
+        tag_name: v63
+        name: "NJM Worker v63 - Full Features"
         files: app/build/outputs/apk/debug/app-debug.apk
         body: |
-          Fix: HTTP 415 error - now uses JSON Content-Type for all POST requests
-          Fix: Updated API endpoints to match server
-          Fix: SessionManager refactored for context-based usage
+          Full features release:
+          - Dashboard with Today/PrintSettings tabs
+          - Revenue stats counter
+          - Print receipt from wash list
+          - Car search with full car details card
+          - Auto-print after recording wash
+          - Network (ESC/POS) + Sunmi builtin printer support
+          - Printer IP/Port settings
+          - Auto-sync: any server update reflected immediately
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
