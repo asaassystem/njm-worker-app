@@ -26,11 +26,18 @@ interface NjmApiService {
     @GET("api/worker/today-washes")
     suspend fun getTodayWashes(): Response<TodayWashesResponse>
 
+    // Month's washes
+    @GET("api/worker/month-washes")
+    suspend fun getMonthWashes(): Response<MonthWashesResponse>
+
+    // Update payment status
+    @POST("api/worker/update-payment")
+    suspend fun updatePayment(@Body request: UpdatePaymentRequest): Response<UpdatePaymentResponse>
+
     // Settings / org info
     @GET("api/worker/settings")
     suspend fun getSettings(): Response<SettingsResponse>
 
-    
     // Logout
     @POST("api/worker/logout")
     suspend fun logout(): Response<LogoutResponse>
