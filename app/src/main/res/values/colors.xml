@@ -1,1 +1,21 @@
-PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHJlc291cmNlcz4KICAgIDxjb2xvciBuYW1lPSJwcmltYXJ5X2JsdWUiPiMxNTY1QzA8L2NvbG9yPgogICAgPGNvbG9yIG5hbWU9InByaW1hcnlfYmx1ZV9kYXJrIj4jMEQ0N0ExPC9jb2xvcj4KICAgIDxjb2xvciBuYW1lPSJwcmltYXJ5X2JsdWVfbGlnaHQiPiMxOTc2RDI8L2NvbG9yPgogICAgPGNvbG9yIG5hbWU9ImFjY2VudF9ibHVlIj4jNDJBNUY1PC9jb2xvcj4KICAgIDxjb2xvciBuYW1lPSJzdWNjZXNzX2dyZWVuIj4jMkU3RDMyPC9jb2xvcj4KICAgIDxjb2xvciBuYW1lPSJzdWNjZXNzX2dyZWVuX2xpZ2h0Ij4jNENBRjUwPC9jb2xvcj4KICAgIDxjb2xvciBuYW1lPSJlcnJvcl9yZWQiPiNDNjI4Mjg8L2NvbG9yPgogICAgPGNvbG9yIG5hbWU9ImVycm9yX3JlZF9saWdodCI+I0VGNTM1MDwvY29sb3I+CiAgICA8Y29sb3IgbmFtZT0id2FybmluZ19vcmFuZ2UiPiNFNjUxMDA8L2NvbG9yPgogICAgPGNvbG9yIG5hbWU9ImJhY2tncm91bmRfbGlnaHQiPiNGNUY1RjU8L2NvbG9yPgogICAgPGNvbG9yIG5hbWU9InN1cmZhY2Vfd2hpdGUiPiNGRkZGRkY8L2NvbG9yPgogICAgPGNvbG9yIG5hbWU9InRleHRfcHJpbWFyeSI+IzIxMjEyMTwvY29sb3I+CiAgICA8Y29sb3IgbmFtZT0idGV4dF9zZWNvbmRhcnkiPiM3NTc1NzU8L2NvbG9yPgogICAgPGNvbG9yIG5hbWU9InRleHRfaGludCI+I0JEQkRCRDwvY29sb3I+CiAgICA8Y29sb3IgbmFtZT0iZGl2aWRlciI+I0UwRTBFMDwvY29sb3I+CiAgICA8Y29sb3IgbmFtZT0iY2hpcF9iYWNrZ3JvdW5kIj4jRTNGMkZEPC9jb2xvcj4KICAgIDxjb2xvciBuYW1lPSJwaW5fZG90X2VtcHR5Ij4jQkRCREJEPC9jb2xvcj4KICAgIDxjb2xvciBuYW1lPSJwaW5fZG90X2ZpbGxlZCI+IzE1NjVDMDwvY29sb3I+CjwvcmVzb3VyY2VzPg==
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_blue">#1565C0</color>
+    <color name="primary_blue_dark">#0D47A1</color>
+    <color name="primary_blue_light">#1976D2</color>
+    <color name="accent_blue">#42A5F5</color>
+    <color name="success_green">#2E7D32</color>
+    <color name="success_green_light">#4CAF50</color>
+    <color name="error_red">#C62828</color>
+    <color name="error_red_light">#EF5350</color>
+    <color name="warning_orange">#E65100</color>
+    <color name="background_light">#F5F5F5</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#BDBDBD</color>
+    <color name="divider">#E0E0E0</color>
+    <color name="chip_background">#E3F2FD</color>
+    <color name="pin_dot_empty">#BDBDBD</color>
+    <color name="pin_dot_filled">#1565C0</color>
+</resources>
