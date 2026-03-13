@@ -105,4 +105,62 @@ object PrinterManager {
                                             Log.e(TAG, "Print failed: ${e.message}")
                             }
         }
+    fun isConnected(): Boolean = serviceConnected
+
+    fun unbindService(context: Context) {
+        if (serviceConnected) {
+            try { context.unbindService(serviceConnection) } catch (e: Exception) {}
+            serviceConnected = false
+            printerService = null
+        }
+    }
+
+    fun printInvoice(context: Context, invoice: com.njm.worker.data.model.Invoice) {
+        val svc = printerService ?: return
+        try {
+            val cls = svc.javaClass
+            fun txt(s: String) = cls.getMethod("printText", String::class.java, Any::class.java).invoke(svc, s, null)
+            fun align(a: Int) = cls.getMethod("setAlignment", Int::class.java, Any::class.java).invoke(svc, a, null)
+            align(1); txt("NJM - ZATCA Invoice\n")
+            txt("Invoice: " + (invoice.invoiceNumber ?: "") + "\n")
+            txt("Date: " + (invoice.invoiceDate ?: "") + "\n")
+            txt("Total: " + (invoice.totalAmount ?: 0.0) + " SAR\n")
+            txt("VAT 15%: " + (invoice.vatAmount ?: 0.0) + " SAR\n")
+            txt("Grand Total: " + (invoice.grandTotal ?: 0.0) + " SAR\n")
+            txt("---------------------------\n")
+            align(1); txt("meshari.tech\n\n\n")
+            try { cls.getMethod("cutPaper", Int::class.java, Any::class.java).invoke(svc, 1, null) } catch (e: Exception) {}
+        } catch (e: Exception) { android.util.Log.e(TAG, "Invoice print failed: " + e.message) }
+    }
+
+    fun printDailyReport(context: Context, washes: List<com.njm.worker.data.model.WashRecord>, date: String) {
+        val svc = printerService ?: return
+        try {
+            val cls = svc.javaClass
+            fun txt(s: String) = cls.getMethod("printText", String::class.java, Any::class.java).invoke(svc, s, null)
+            fun align(a: Int) = cls.getMethod("setAlignment", Int::class.java, Any::class.java).invoke(svc, a, null)
+            align(1); txt("NJM Daily Report - " + date + "\n")
+            val total = washes.sumOf { it.cost ?: 0.0 }
+            txt("Count: " + washes.size + "\n")
+            txt("Total: " + total + " SAR\n")
+            align(1); txt("meshari.tech\n\n\n")
+            try { cls.getMethod("cutPaper", Int::class.java, Any::class.java).invoke(svc, 1, null) } catch (e: Exception) {}
+        } catch (e: Exception) { android.util.Log.e(TAG, "Daily report failed: " + e.message) }
+    }
+
+    fun printMonthlyReport(context: Context, washes: List<com.njm.worker.data.model.WashRecord>, month: String) {
+        val svc = printerService ?: return
+        try {
+            val cls = svc.javaClass
+            fun txt(s: String) = cls.getMethod("printText", String::class.java, Any::class.java).invoke(svc, s, null)
+            fun align(a: Int) = cls.getMethod("setAlignment", Int::class.java, Any::class.java).invoke(svc, a, null)
+            align(1); txt("NJM Monthly Report - " + month + "\n")
+            val total = washes.sumOf { it.cost ?: 0.0 }
+            txt("Count: " + washes.size + "\n")
+            txt("Total: " + total + " SAR\n")
+            align(1); txt("meshari.tech\n\n\n")
+            try { cls.getMethod("cutPaper", Int::class.java, Any::class.java).invoke(svc, 1, null) } catch (e: Exception) {}
+        } catch (e: Exception) { android.util.Log.e(TAG, "Monthly report failed: " + e.message) }
+    }
+
 }
