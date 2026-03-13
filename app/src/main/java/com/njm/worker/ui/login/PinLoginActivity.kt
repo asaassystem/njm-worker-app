@@ -10,13 +10,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.njm.worker.R
-import com.njm.worker.data.repository.WorkerRepository
+import com.njm.worker.data.api.ApiClient
+import com.njm.worker.data.model.LoginRequest
 import com.njm.worker.ui.dashboard.DashboardActivity
 import com.njm.worker.utils.SessionManager
 import kotlinx.coroutines.launch
 
 class PinLoginActivity : AppCompatActivity() {
-    private val repo = WorkerRepository()
     private var pin = StringBuilder()
     private lateinit var dots: Array<TextView>
     private lateinit var tvError: TextView
@@ -24,7 +24,7 @@ class PinLoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (SessionManager.isLoggedIn()) {
+        if (SessionManager.isLoggedIn(this)) {
             startDashboard()
             return
         }
@@ -61,42 +61,59 @@ class PinLoginActivity : AppCompatActivity() {
     }
 
     private fun deleteDigit() {
-        if (pin.isNotEmpty()) { pin.deleteCharAt(pin.length - 1); updateDots() }
+        if (pin.isNotEmpty()) {
+            pin.deleteCharAt(pin.length - 1)
+            updateDots()
+        }
     }
 
     private fun updateDots() {
         dots.forEachIndexed { i, dot ->
-            dot.text = if (i < pin.length) getString(R.string.pin_dot_filled)
-            else getString(R.string.pin_dot_empty)
+            dot.text = if (i < pin.length) "x" else "o"
         }
     }
 
     private fun doLogin() {
-        if (pin.length != 4) { showError("Please enter 4 digits"); return }
-        setLoading(true)
-        lifecycleScope.launch {
-            val result = repo.loginWithPin(pin.toString())
-            setLoading(false)
-            result.onSuccess { resp ->
-                SessionManager.saveSession(
-                    resp.workerId ?: 0,
-                    resp.workerName ?: "",
-                    resp.orgId ?: 0
-                )
-                startDashboard()
-            }.onFailure { showError(it.message ?: "Login failed") }
+        val pinStr = pin.toString()
+        if (pinStr.length != 4) {
+            tvError.text = getString(R.string.error_pin_length)
+            tvError.visibility = View.VISIBLE
+            return
         }
-    }
+        tvError.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
 
-    private fun showError(msg: String) {
-        tvError.text = msg
-        tvError.visibility = View.VISIBLE
-        pin.clear()
-        updateDots()
-    }
+        lifecycleScope.launch {
+            try {
+                val api = ApiClient.service
+                val response = api.loginWithPin(LoginRequest(pin = pinStr))
+                progressBar.visibility = View.GONE
 
-    private fun setLoading(loading: Boolean) {
-        progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+                if (response.isSuccessful && response.body()?.success == true) {
+                    val body = response.body()!!
+                    SessionManager.saveWorker(
+                        this@PinLoginActivity,
+                        body.workerId ?: 0,
+                        body.workerName ?: "",
+                        body.orgId ?: 0,
+                        pinStr
+                    )
+                    startDashboard()
+                } else {
+                    val msg = response.body()?.message ?: getString(R.string.error_invalid_pin)
+                    tvError.text = msg
+                    tvError.visibility = View.VISIBLE
+                    pin.clear()
+                    updateDots()
+                }
+            } catch (e: Exception) {
+                progressBar.visibility = View.GONE
+                tvError.text = getString(R.string.error_network) + ": " + (e.message ?: "")
+                tvError.visibility = View.VISIBLE
+                pin.clear()
+                updateDots()
+            }
+        }
     }
 
     private fun startDashboard() {
