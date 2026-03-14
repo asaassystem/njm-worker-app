@@ -1,182 +1,80 @@
 package com.njm.worker.ui.dashboard
 
-import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import com.google.android.material.textfield.TextInputEditText
 import com.njm.worker.R
-import com.njm.worker.data.repository.WorkerRepository
 import com.njm.worker.printer.PrinterManager
-import kotlinx.coroutines.launch
 
 /**
- * PrintSettingsFragment - Sunmi V2s printer detection, ZATCA invoice settings
+ * PrintSettingsFragment - Printer settings and test print
+ * Navy/Gold design with Sunmi printer status
  * Developer: meshari.tech
  */
 class PrintSettingsFragment : Fragment() {
 
-    private val repo = WorkerRepository()
+    private lateinit var tvPrinterStatus: TextView
+    private lateinit var tvPrinterModel: TextView
+    private lateinit var btnTestPrint: Button
+    private lateinit var btnCheckStatus: Button
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_print_settings, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews(view)
-        loadOrgInfo(view)
-        initPrinter(view)
+        initViews(view)
+        checkPrinterStatus()
     }
 
-    private fun initPrinter(view: View) {
-        val tvStatus = view.findViewById<TextView>(R.id.tvPrinterStatus)
-        val tvModel = view.findViewById<TextView>(R.id.tvSunmiModel)
+    private fun initViews(view: View) {
+        tvPrinterStatus = view.findViewById(R.id.tv_printer_status)
+        tvPrinterModel = view.findViewById(R.id.tv_printer_model)
+        btnTestPrint = view.findViewById(R.id.btn_test_print)
+        btnCheckStatus = view.findViewById(R.id.btn_check_status)
 
-        val deviceModel = Build.MODEL
-        tvModel?.text = "الجهاز: $deviceModel"
-
-        PrinterManager.init(requireContext()) {
-            activity?.runOnUiThread {
-                val connected = PrinterManager.isConnected()
-                tvStatus?.text = if (connected) "✅ متصلة | Connected" else "❌ غير متصلة | Disconnected"
-                tvStatus?.setTextColor(
-                    if (connected) android.graphics.Color.parseColor("#4CAF50")
-                    else android.graphics.Color.parseColor("#F44336")
-                )
-            }
-        }
+        btnTestPrint.setOnClickListener { testPrint() }
+        btnCheckStatus.setOnClickListener { checkPrinterStatus() }
     }
 
-    private fun setupViews(view: View) {
-        val rgPrintMethod = view.findViewById<RadioGroup>(R.id.rgPrintMethod)
-        val layoutNetworkPrinter = view.findViewById<View>(R.id.layoutNetworkPrinter)
-        val etPrinterIp = view.findViewById<TextInputEditText>(R.id.etPrinterIp)
-        val etPrinterPort = view.findViewById<TextInputEditText>(R.id.etPrinterPort)
-        val switchAutoPrint = view.findViewById<SwitchCompat>(R.id.switchAutoPrint)
-        val switchPrintInvoice = view.findViewById<SwitchCompat>(R.id.switchPrintInvoice)
-        val btnDetect = view.findViewById<Button>(R.id.btnDetectPrinter)
-        val tvStatus = view.findViewById<TextView>(R.id.tvPrinterStatus)
-
-        val etOrgName = view.findViewById<TextInputEditText>(R.id.etInvoiceOrgName)
-        val etVatNumber = view.findViewById<TextInputEditText>(R.id.etVatNumber)
-        val etCrNumber = view.findViewById<TextInputEditText>(R.id.etCrNumber)
-        val etAddress = view.findViewById<TextInputEditText>(R.id.etAddress)
-        val rgPaperSize = view.findViewById<RadioGroup>(R.id.rgPaperSize)
-
-        val btnSave = view.findViewById<Button>(R.id.btnSaveSettings)
-        val btnTest = view.findViewById<Button>(R.id.btnTestPrint)
-
-        val prefs = requireContext().getSharedPreferences("print_settings", Context.MODE_PRIVATE)
-        val method = prefs.getString("print_method", "sunmi")
-        val ip = prefs.getString("printer_ip", "")
-        val port = prefs.getInt("printer_port", 9100)
-        val autoPrint = prefs.getBoolean("auto_print", true)
-        val printInvoice = prefs.getBoolean("print_invoice", false)
-        val paperSize = prefs.getString("paper_size", "58mm")
-        val orgName = prefs.getString("org_name", "مغسلة نجم")
-        val vatNumber = prefs.getString("vat_number", "")
-        val crNumber = prefs.getString("cr_number", "")
-        val address = prefs.getString("address", "حفر الباطن، المنطقة الشرقية")
-
-        if (method == "network") {
-            view.findViewById<android.widget.RadioButton>(R.id.rbNetworkPrinter)?.isChecked = true
-            layoutNetworkPrinter?.visibility = View.VISIBLE
-        }
-
-        etPrinterIp?.setText(ip)
-        etPrinterPort?.setText(port.toString())
-        switchAutoPrint?.isChecked = autoPrint
-        switchPrintInvoice?.isChecked = printInvoice
-        etOrgName?.setText(orgName)
-        etVatNumber?.setText(vatNumber)
-        etCrNumber?.setText(crNumber)
-        etAddress?.setText(address)
-
-        if (paperSize == "80mm") {
-            view.findViewById<android.widget.RadioButton>(R.id.rb80mm)?.isChecked = true
-        }
-
-        rgPrintMethod?.setOnCheckedChangeListener { _, checkedId ->
-            layoutNetworkPrinter?.visibility =
-                if (checkedId == R.id.rbNetworkPrinter) View.VISIBLE else View.GONE
-        }
-
-        btnDetect?.setOnClickListener {
-            tvStatus?.text = "⏳ جاري الفحص..."
-            tvStatus?.setTextColor(android.graphics.Color.parseColor("#FF9800"))
-            PrinterManager.init(requireContext()) {
-                activity?.runOnUiThread {
-                    val connected = PrinterManager.isConnected()
-                    tvStatus?.text = if (connected) "✅ متصلة | Connected" else "❌ غير متصلة | Disconnected"
-                    tvStatus?.setTextColor(
-                        if (connected) android.graphics.Color.parseColor("#4CAF50")
-                        else android.graphics.Color.parseColor("#F44336")
-                    )
-                    Toast.makeText(
-                        requireContext(),
-                        if (connected) "الطابعة متصلة ✅" else "الطابعة غير متصلة ❌",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
-
-        btnSave?.setOnClickListener {
-            val selectedMethod = if (rgPrintMethod?.checkedRadioButtonId == R.id.rbNetworkPrinter) "network" else "sunmi"
-            val selectedPaper = if (rgPaperSize?.checkedRadioButtonId == R.id.rb80mm) "80mm" else "58mm"
-
-            prefs.edit()
-                .putString("print_method", selectedMethod)
-                .putString("printer_ip", etPrinterIp?.text.toString())
-                .putInt("printer_port", etPrinterPort?.text.toString().toIntOrNull() ?: 9100)
-                .putBoolean("auto_print", switchAutoPrint?.isChecked ?: true)
-                .putBoolean("print_invoice", switchPrintInvoice?.isChecked ?: false)
-                .putString("paper_size", selectedPaper)
-                .putString("org_name", etOrgName?.text.toString().ifBlank { "مغسلة نجم" })
-                .putString("vat_number", etVatNumber?.text.toString())
-                .putString("cr_number", etCrNumber?.text.toString())
-                .putString("address", etAddress?.text.toString())
-                .apply()
-
-            Toast.makeText(requireContext(), "✅ تم حفظ الإعدادات", Toast.LENGTH_SHORT).show()
-        }
-
-        btnTest?.setOnClickListener {
-            if (PrinterManager.isConnected()) {
-                PrintManager.printTest(requireContext(), requireActivity())
-                Toast.makeText(requireContext(), "🖨 جاري الطباعة التجريبية...", Toast.LENGTH_SHORT).show()
+    private fun checkPrinterStatus() {
+        context?.let { ctx ->
+            val isConnected = PrinterManager.isConnected()
+            if (isConnected) {
+                tvPrinterStatus.text = getString(R.string.printer_connected)
+                tvPrinterStatus.setTextColor(resources.getColor(R.color.success_green, null))
+                tvPrinterModel.text = getString(R.string.sunmi_built_in)
+                btnTestPrint.isEnabled = true
             } else {
-                Toast.makeText(requireContext(), "❌ الطابعة غير متصلة", Toast.LENGTH_SHORT).show()
+                tvPrinterStatus.text = getString(R.string.printer_not_connected)
+                tvPrinterStatus.setTextColor(resources.getColor(R.color.error_red, null))
+                tvPrinterModel.text = getString(R.string.connecting)
+                btnTestPrint.isEnabled = false
+                // Try to reconnect
+                PrinterManager.init(ctx) {
+                    if (isAdded) {
+                        checkPrinterStatus()
+                    }
+                }
             }
         }
     }
 
-    private fun loadOrgInfo(view: View) {
-        val tvOrgInfo = view.findViewById<TextView>(R.id.tvOrgInfo)
-        lifecycleScope.launch {
-            try {
-                val result = repo.getSettings()
-                result.onSuccess { data ->
-                    val orgName = data.org?.name ?: "NJM - مغسلة نجم"
-                    tvOrgInfo?.text = "المنشأة: $orgName"
-                }
-            } catch (_: Exception) {
-                tvOrgInfo?.text = "المنشأة: NJM - مغسلة نجم"
-            }
+    private fun testPrint() {
+        context?.let { ctx ->
+            PrinterManager.printTestPage(ctx)
+            Toast.makeText(ctx, R.string.printing_test, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkPrinterStatus()
     }
 }
