@@ -23,13 +23,54 @@ class PinLoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (SessionManager.isLoggedIn(this)) {
-            startDashboard()
+
+        // If user has a saved PIN, auto-relogin to refresh session cookie
+        val savedPin = SessionManager.getPin(this)
+        if (SessionManager.isLoggedIn(this) && savedPin.isNotEmpty()) {
+            setContentView(R.layout.activity_pin_login)
+            dots = arrayOf(
+                findViewById(R.id.dot1), findViewById(R.id.dot2),
+                findViewById(R.id.dot3), findViewById(R.id.dot4)
+            )
+            tvError = findViewById(R.id.tvError)
+            progressBar = findViewById(R.id.progressBar)
+            progressBar.visibility = View.VISIBLE
+            tvError.visibility = View.GONE
+            lifecycleScope.launch {
+                try {
+                    val api = ApiClient.apiService
+                    val response = api.loginWithPin(LoginRequest(pin = savedPin))
+                    progressBar.visibility = View.GONE
+                    if (response.isSuccessful && response.body()?.success == true) {
+                        val body = response.body()!!
+                        SessionManager.saveWorker(
+                            this@PinLoginActivity,
+                            body.workerId ?: 0,
+                            body.workerName ?: "",
+                            body.orgId ?: 0,
+                            savedPin
+                        )
+                        startDashboard()
+                    } else {
+                        SessionManager.logout(this@PinLoginActivity)
+                        setupViews()
+                        tvError.text = "انتهت الجلسة. أدخل PIN مرة أخرى"
+                        tvError.visibility = View.VISIBLE
+                    }
+                } catch (e: Exception) {
+                    progressBar.visibility = View.GONE
+                    // Network error - go to dashboard anyway
+                    startDashboard()
+                }
+            }
             return
         }
+
         setContentView(R.layout.activity_pin_login)
         setupViews()
     }
+
+    override fun onSupportNavigateUp(): Boolean { finish(); return true }
 
     private fun setupViews() {
         dots = arrayOf(
@@ -60,16 +101,11 @@ class PinLoginActivity : AppCompatActivity() {
     }
 
     private fun deleteDigit() {
-        if (pin.isNotEmpty()) {
-            pin.deleteCharAt(pin.length - 1)
-            updateDots()
-        }
+        if (pin.isNotEmpty()) { pin.deleteCharAt(pin.length - 1); updateDots() }
     }
 
     private fun updateDots() {
-        dots.forEachIndexed { i, dot ->
-            dot.text = if (i < pin.length) "x" else "o"
-        }
+        dots.forEachIndexed { i, dot -> dot.text = if (i < pin.length) "x" else "o" }
     }
 
     private fun doLogin() {
@@ -81,13 +117,11 @@ class PinLoginActivity : AppCompatActivity() {
         }
         tvError.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
-
         lifecycleScope.launch {
             try {
                 val api = ApiClient.apiService
                 val response = api.loginWithPin(LoginRequest(pin = pinStr))
                 progressBar.visibility = View.GONE
-
                 if (response.isSuccessful && response.body()?.success == true) {
                     val body = response.body()!!
                     SessionManager.saveWorker(
@@ -107,7 +141,7 @@ class PinLoginActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 progressBar.visibility = View.GONE
-                tvError.text = "Network error: " + (e.message ?: "unknown")
+                tvError.text = "خطأ في الاتصال: " + (e.message ?: "unknown")
                 tvError.visibility = View.VISIBLE
                 pin.clear()
                 updateDots()
