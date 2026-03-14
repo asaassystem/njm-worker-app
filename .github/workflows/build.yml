@@ -18,8 +18,11 @@ jobs:
         with:
           cache-disabled: false
 
-      - name: Make gradlew executable
-        run: chmod +x gradlew
+      - name: Fix gradlew (decode base64 and restore)
+        run: |
+          base64 -d gradlew > gradlew.sh
+          mv gradlew.sh gradlew
+          chmod +x gradlew
 
       - name: Build APK
         run: ./gradlew assembleDebug
@@ -43,10 +46,6 @@ jobs:
             ✅ **Printer auto-detect** button with status indicator
             ✅ **Paper size**: 58mm (Sunmi V2s) / 80mm
             ✅ **meshari.tech** developer credit everywhere
-
-            ### Root Cause of Car Search Bug:
-            Session cookie was stored in-memory only. When app restarted, cookie was lost
-            but app skipped login screen. Now auto-relogins with saved PIN on every app start.
 
             Developer: meshari.tech
           files: app/build/outputs/apk/debug/app-debug.apk
