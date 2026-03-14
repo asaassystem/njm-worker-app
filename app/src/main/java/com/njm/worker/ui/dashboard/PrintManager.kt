@@ -17,7 +17,7 @@ import java.util.Locale
  */
 object PrintManager {
 
-    fun bindPrinter(context: Context, onReady: () -> Unit = {}) = PrinterManager.init(context, onReady)
+    fun bindPrinter(context: Context, onReady: () -> Unit = {}) = PrinterManager.init(context, onReady = onReady)
     fun isPrinterAvailable(): Boolean = PrinterManager.isConnected()
     fun unbindPrinter(context: Context) = PrinterManager.unbindService(context)
 
