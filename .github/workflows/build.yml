@@ -3,71 +3,49 @@ name: Build NJM Worker APK
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: '8.2'
+          cache-disabled: false
 
-      - name: Build Debug APK
-        run: gradle assembleDebug --no-daemon
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: njm-worker-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
+      - name: Build APK
+        run: ./gradlew assembleDebug
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: v66
-          name: "NJM Worker v66 - Sunmi SDK + App Icon + Logo"
-          files: app/build/outputs/apk/debug/app-debug.apk
+          tag_name: v67
+          name: "NJM Worker v67 - Fix Car Search + Auto Session"
           body: |
-            ## NJM Worker App v66 - Full Sunmi SDK Integration
+            ## NJM Worker App v67 - Critical Bug Fixes
 
             ### What's Fixed:
-            - ✅ Sunmi SDK (com.sunmi:printerlibrary:1.0.23) properly added to build.gradle
-            - ✅ PrinterManager uses InnerPrinterManager.getInstance().bindService() - Official API
-            - ✅ NjmApp binds printer on Application startup automatically
-            - ✅ App icon (NJM gold star on navy) appears on home screen
-            - ✅ NJM logo vector drawable updated with proper star compass design
-            - ✅ ZATCA invoice settings: org name, VAT number, CR number, address
-            - ✅ Printer auto-detect with status indicator
-            - ✅ Paper size: 58mm (Sunmi V2s) / 80mm
-            - ✅ meshari.tech developer credit everywhere
-            - ✅ admincup_njm database connected via njm.company
+            ✅ **Car search now works** - Fixed session authentication issue
+            ✅ **Auto-relogin on app start** - No more "خطأ بالاتصال" after restart
+            ✅ **Sunmi SDK** (com.sunmi:printerlibrary:1.0.23) properly integrated
+            ✅ **PrinterManager** uses InnerPrinterManager.getInstance().bindService()
+            ✅ **App icon** (NJM gold star) appears on home screen
+            ✅ **NJM Logo** visible inside the app
+            ✅ **ZATCA invoice settings**: org name, VAT number, CR number, address
+            ✅ **Printer auto-detect** button with status indicator
+            ✅ **Paper size**: 58mm (Sunmi V2s) / 80mm
+            ✅ **meshari.tech** developer credit everywhere
 
-            ### Sunmi V2s Integration:
-            - Binds to com.sunmi.peripheral.printer via InnerPrinterManager
-            - Auto-reconnects if disconnected
-            - Falls back gracefully on non-Sunmi devices
+            ### Root Cause of Car Search Bug:
+            Session cookie was stored in-memory only. When app restarted, cookie was lost
+            but app skipped login screen. Now auto-relogins with saved PIN on every app start.
 
             Developer: meshari.tech
+          files: app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
