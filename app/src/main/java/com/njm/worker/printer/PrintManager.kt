@@ -14,8 +14,7 @@ import com.njm.worker.data.model.WashResponse
 object PrintManager {
 
     fun bindPrinter(context: Context, onReady: () -> Unit = {}) {
-        PrinterManager.init(context, onReady)
-    }
+            PrinterManager.init(context, onReady = onReady)
 
     fun isPrinterAvailable(): Boolean = PrinterManager.isConnected()
 
