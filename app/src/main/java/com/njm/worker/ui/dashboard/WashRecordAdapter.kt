@@ -1,67 +1,72 @@
 package com.njm.worker.ui.dashboard
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.njm.worker.R
 import com.njm.worker.data.model.WashRecord
 
+/**
+ * WashRecordAdapter - RecyclerView adapter for wash records
+ * Navy/Gold card design
+ * Developer: meshari.tech
+ */
 class WashRecordAdapter(
-    private val washes: List<WashRecord>,
-    private val onPrint: ((WashRecord) -> Unit)? = null,
-    private val onTogglePaid: ((WashRecord) -> Unit)? = null
-) : RecyclerView.Adapter<WashRecordAdapter.VH>() {
+    private val records: List<WashRecord>,
+    private val onItemClick: (WashRecord) -> Unit
+) : RecyclerView.Adapter<WashRecordAdapter.ViewHolder>() {
 
-    inner class VH(v: View) : RecyclerView.ViewHolder(v) {
-        val card: CardView = v.findViewById(R.id.cardWashRecord)
-        val tvPlate: TextView = v.findViewById(R.id.tvPlateNumber)
-        val tvType: TextView = v.findViewById(R.id.tvCarType)
-        val tvOrg: TextView = v.findViewById(R.id.tvOrgName)
-        val tvCost: TextView = v.findViewById(R.id.tvCost)
-        val tvTime: TextView = v.findViewById(R.id.tvWashTime)
-        val tvPayStatus: TextView = v.findViewById(R.id.tvPaidStatus)
-        val btnPrint: Button = v.findViewById(R.id.btnPrintReceipt)
-        val btnTogglePaid: Button = v.findViewById(R.id.btnTogglePaid)
-    }
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tvPlate: TextView = itemView.findViewById(R.id.tv_plate)
+        val tvService: TextView = itemView.findViewById(R.id.tv_service)
+        val tvPrice: TextView = itemView.findViewById(R.id.tv_price)
+        val tvTime: TextView = itemView.findViewById(R.id.tv_time)
+        val tvCarModel: TextView = itemView.findViewById(R.id.tv_car_model)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        return VH(LayoutInflater.from(parent.context).inflate(R.layout.item_wash_record, parent, false))
-    }
-
-    override fun getItemCount() = washes.size
-
-    override fun onBindViewHolder(holder: VH, position: Int) {
-        val wash = washes[position]
-        holder.tvPlate.text = wash.plateNumber ?: ""
-        holder.tvType.text = when ((wash.carType ?: "").lowercase()) {
-            "large" -> "كبير"
-            "small" -> "صغير"
-            else -> wash.carType ?: ""
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_ID.toInt()) {
+                    onItemClick(records[position])
+                }
+            }
         }
-        holder.tvOrg.text = wash.orgName ?: ""
-        holder.tvCost.text = String.format("%.0f ر.س", wash.cost ?: 0.0)
-        holder.tvTime.text = wash.washTime ?: ""
+    }
 
-        val isPaid = (wash.isPaid ?: 1) == 1
-        holder.tvPayStatus.text = if (isPaid) "مدفوع" else "غير مدفوع"
-        holder.tvPayStatus.setTextColor(if (isPaid) Color.parseColor("#27AE60") else Color.parseColor("#E74C3C"))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_wash_record, parent, false)
+        return ViewHolder(view)
+    }
 
-        holder.btnTogglePaid.text = if (isPaid) "غير مدفوع" else "دفع"
-        holder.btnTogglePaid.backgroundTintList = android.content.res.ColorStateList.valueOf(
-            if (isPaid) Color.parseColor("#E74C3C") else Color.parseColor("#27AE60")
-        )
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val record = records[position]
+        holder.tvPlate.text = record.plate_number ?: "-"
+        holder.tvService.text = record.service_type ?: "-"
+        holder.tvPrice.text = if (record.price != null) {
+            "${record.price} ر.س"
+        } else {
+            "-"
+        }
+        holder.tvTime.text = record.created_at?.let { formatTime(it) } ?: "-"
+        holder.tvCarModel.text = record.car_model ?: ""
+    }
 
-        holder.btnPrint.setOnClickListener { onPrint?.invoke(wash) }
-        holder.btnTogglePaid.setOnClickListener { onTogglePaid?.invoke(wash) }
+    override fun getItemCount(): Int = records.size
 
-        // Color-code card background based on payment status
-        holder.card.setCardBackgroundColor(
-            if (isPaid) Color.WHITE else Color.parseColor("#FFF8E1")
-        )
+    private fun formatTime(dateTime: String): String {
+        return try {
+            val parts = dateTime.split("T", " ")
+            if (parts.size >= 2) {
+                val timeParts = parts[1].split(":")
+                if (timeParts.size >= 2) {
+                    "${timeParts[0]}:${timeParts[1]}"
+                } else parts[1]
+            } else dateTime
+        } catch (e: Exception) {
+            dateTime
+        }
     }
 }
