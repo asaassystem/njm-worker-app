@@ -11,6 +11,46 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- NJM Logo Header Banner -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#1a2744"
+            android:padding="10dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:id="@+id/ivLogoFrag"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/njm_logo"
+                android:scaleType="fitCenter"
+                android:contentDescription="NJM"
+                android:layout_marginEnd="10dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="تسجيل غسيل جديد"
+                    android:textColor="#c9a227"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New Wash Record"
+                    android:textColor="#556677"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </LinearLayout>
+
         <!-- Search Section -->
         <TextView
             android:layout_width="match_parent"
