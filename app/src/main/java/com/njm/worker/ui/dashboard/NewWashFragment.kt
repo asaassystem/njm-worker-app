@@ -1,46 +1,34 @@
 package com.njm.worker.ui.dashboard
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.njm.worker.R
-import com.njm.worker.data.ApiClient
-import com.njm.worker.data.model.WashRecord
-import com.njm.worker.printer.PrinterManager
+import com.njm.worker.data.model.CarDetail
+import com.njm.worker.data.repository.WorkerRepository
+import com.njm.worker.printer.PrintManager
 import com.njm.worker.utils.SessionManager
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
- * NewWashFragment - Record a new car wash
- * Navy/Gold design
+ * NewWashFragment - تسجيل غسيل جديد
+ * Design v2: NJM Navy/Gold theme
  * Developer: meshari.tech
  */
 class NewWashFragment : Fragment() {
 
-    private lateinit var etCarSearch: AutoCompleteTextView
-    private lateinit var etPlate: EditText
-    private lateinit var etServiceType: EditText
-    private lateinit var tvCarInfo: TextView
-    private lateinit var btnRecord: Button
-    private lateinit var progressBar: ProgressBar
-    private lateinit var tvResult: TextView
-
-    private var selectedCarId: Int? = null
-    private val searchHandler = android.os.Handler(android.os.Looper.getMainLooper())
-    private var searchRunnable: Runnable? = null
+    private val repo = WorkerRepository()
+    private var selectedCar: CarDetail? = null
+    private var searchJob: Job? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_new_wash, container, false)
@@ -48,139 +36,187 @@ class NewWashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews(view)
-        setupCarSearch()
+        setupSearch(view)
+        setupForm(view)
     }
 
-    private fun initViews(view: View) {
-        etCarSearch = view.findViewById(R.id.et_car_search)
-        etPlate = view.findViewById(R.id.et_plate)
-        etServiceType = view.findViewById(R.id.et_service_type)
-        tvCarInfo = view.findViewById(R.id.tv_car_info)
-        btnRecord = view.findViewById(R.id.btn_record_wash)
-        progressBar = view.findViewById(R.id.progress_bar)
-        tvResult = view.findViewById(R.id.tv_result)
+    private fun setupSearch(view: View) {
+        val etPlate = view.findViewById<EditText>(R.id.etPlateSearch)
+        val rvCars = view.findViewById<ListView>(R.id.lvSearchResults)
+        val tvStatus = view.findViewById<TextView>(R.id.tvSearchStatus)
+        val cardCarInfo = view.findViewById<View>(R.id.cardCarInfo)
 
-        btnRecord.setOnClickListener { recordWash() }
-    }
-
-    private fun setupCarSearch() {
-        etCarSearch.addTextChangedListener(object : TextWatcher {
+        etPlate.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val query = s?.toString()?.trim() ?: ""
+                searchJob?.cancel()
+                if (query.length >= 2) {
+                    searchJob = lifecycleScope.launch {
+                        delay(500)
+                        performSearch(query, rvCars, tvStatus, cardCarInfo, view)
+                    }
+                } else {
+                    rvCars.visibility = View.GONE
+                    cardCarInfo.visibility = View.GONE
+                    selectedCar = null
+                    updateRecordButton(view)
+                }
+            }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                searchRunnable?.let { searchHandler.removeCallbacks(it) }
-                val query = s?.toString()?.trim() ?: ""
-                if (query.length >= 2) {
-                    searchRunnable = Runnable { searchCar(query) }
-                    searchHandler.postDelayed(searchRunnable!!, 500)
+        })
+    }
+
+    private fun performSearch(query: String, lv: ListView, tvStatus: TextView, cardCarInfo: View, root: View) {
+        tvStatus.text = getLangStr("searching")
+        tvStatus.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            val result = repo.searchCar(query)
+            result.onSuccess { resp ->
+                if (resp.success) {
+                    val cars = resp.cars ?: listOfNotNull(resp.car)
+                    if (cars.isEmpty()) {
+                        tvStatus.text = getLangStr("no_cars_found")
+                        lv.visibility = View.GONE
+                        cardCarInfo.visibility = View.GONE
+                    } else if (cars.size == 1) {
+                        tvStatus.visibility = View.GONE
+                        lv.visibility = View.GONE
+                        showCarInfo(cars[0], cardCarInfo, root)
+                    } else {
+                        tvStatus.visibility = View.GONE
+                        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1,
+                            cars.map { "${it.plateNumber} - ${it.carTypeLabel ?: it.carType ?: ""}" })
+                        lv.adapter = adapter
+                        lv.visibility = View.VISIBLE
+                        lv.setOnItemClickListener { _, _, pos, _ ->
+                            lv.visibility = View.GONE
+                            showCarInfo(cars[pos], cardCarInfo, root)
+                        }
+                    }
                 } else {
-                    selectedCarId = null
-                    tvCarInfo.visibility = View.GONE
+                    tvStatus.text = resp.message ?: getLangStr("error")
                 }
+            }.onFailure {
+                tvStatus.text = getLangStr("connection_error")
             }
-        })
-
-        etCarSearch.setOnItemClickListener { parent, _, position, _ ->
-            val selected = parent.getItemAtPosition(position) as? String ?: return@setOnItemClickListener
-            // Extract car ID from adapter tag if available
         }
     }
 
-    private fun searchCar(query: String) {
-        ApiClient.apiService.searchCar(query).enqueue(object : Callback<List<com.njm.worker.data.model.Car>> {
-            override fun onResponse(call: Call<List<com.njm.worker.data.model.Car>>, response: Response<List<com.njm.worker.data.model.Car>>) {
-                if (!isAdded) return
-                val cars = response.body() ?: return
-                val names = cars.map { "${it.owner_name} - ${it.plate_number}" }
-                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, names)
-                etCarSearch.setAdapter(adapter)
-                adapter.notifyDataSetChanged()
-                if (cars.size == 1) {
-                    selectedCarId = cars[0].id
-                    tvCarInfo.text = "${cars[0].owner_name}\n${cars[0].plate_number} - ${cars[0].car_model}"
-                    tvCarInfo.visibility = View.VISIBLE
-                }
-            }
-
-            override fun onFailure(call: Call<List<com.njm.worker.data.model.Car>>, t: Throwable) {
-                if (isAdded) {
-                    Toast.makeText(requireContext(), R.string.connection_error, Toast.LENGTH_SHORT).show()
-                }
-            }
-        })
+    private fun showCarInfo(car: CarDetail, cardCarInfo: View, root: View) {
+        selectedCar = car
+        cardCarInfo.visibility = View.VISIBLE
+        root.findViewById<TextView>(R.id.tvCarPlate)?.text = car.plateNumber
+        root.findViewById<TextView>(R.id.tvCarType)?.text = car.carTypeLabel ?: car.carType ?: "-"
+        root.findViewById<TextView>(R.id.tvCarOwner)?.text = car.ownerName ?: "-"
+        root.findViewById<TextView>(R.id.tvCarPhone)?.text = car.ownerPhone ?: "-"
+        root.findViewById<TextView>(R.id.tvCarBrand)?.text = "${car.carBrand ?: ""} ${car.carModel ?: ""} ${car.modelYear ?: ""}".trim()
+        root.findViewById<TextView>(R.id.tvCarOrg)?.text = car.orgName ?: "-"
+        val price = car.washPrice ?: 0.0
+        root.findViewById<TextView>(R.id.tvWashPrice)?.text = "$price ${getLangStr("sar")}"
+        updateRecordButton(root)
     }
 
-    private fun recordWash() {
-        val plate = etPlate.text.toString().trim()
-        val serviceType = etServiceType.text.toString().trim()
+    private fun setupForm(view: View) {
+        val etNotes = view.findViewById<EditText>(R.id.etWashNotes)
+        val btnRecord = view.findViewById<Button>(R.id.btnRecordWash)
+        val btnPrint = view.findViewById<Button>(R.id.btnPrintReceipt)
+        val switchPaid = view.findViewById<Switch>(R.id.switchPaid)
 
-        if (plate.isEmpty()) {
-            etPlate.error = getString(R.string.required_field)
-            return
+        updateRecordButton(view)
+
+        btnRecord?.setOnClickListener {
+            val car = selectedCar ?: return@setOnClickListener
+            val isPaid = if (switchPaid?.isChecked == true) 1 else 0
+            val notes = etNotes?.text?.toString() ?: ""
+            val lang = SessionManager.getLang(requireContext())
+
+            AlertDialog.Builder(requireContext())
+                .setTitle(getLangStr("confirm_wash"))
+                .setMessage("${getLangStr("plate")}: ${car.plateNumber}
+${getLangStr("price")}: ${car.washPrice ?: 0.0} ${getLangStr("sar")}
+${getLangStr("payment")}: ${if (isPaid == 1) getLangStr("paid") else getLangStr("unpaid")}")
+                .setPositiveButton(getLangStr("confirm")) { _, _ -> recordWash(car, isPaid, notes, lang, view) }
+                .setNegativeButton(getLangStr("cancel"), null)
+                .show()
         }
 
-        val session = SessionManager(requireContext())
-        val workerId = session.getWorkerId()
+        btnPrint?.setOnClickListener {
+            val car = selectedCar ?: return@setOnClickListener
+            val act = activity ?: return@setOnClickListener
+            PrintManager.printReceiptForCar(act, car)
+        }
+    }
 
-        showLoading(true)
+    private fun recordWash(car: CarDetail, isPaid: Int, notes: String, lang: String, view: View) {
+        val progressBar = view.findViewById<ProgressBar>(R.id.progressWash)
+        progressBar?.visibility = View.VISIBLE
+        view.findViewById<Button>(R.id.btnRecordWash)?.isEnabled = false
 
-        val washData = mapOf(
-            "plate_number" to plate,
-            "service_type" to serviceType.ifEmpty { "غسيل عادي" },
-            "worker_id" to workerId.toString()
-        )
+        lifecycleScope.launch {
+            val result = repo.recordWash(car.id, isPaid, notes, lang)
+            progressBar?.visibility = View.GONE
+            view.findViewById<Button>(R.id.btnRecordWash)?.isEnabled = true
 
-        ApiClient.apiService.recordWash(washData).enqueue(object : Callback<WashRecord> {
-            override fun onResponse(call: Call<WashRecord>, response: Response<WashRecord>) {
-                if (!isAdded) return
-                showLoading(false)
-                if (response.isSuccessful) {
-                    val record = response.body()
-                    showSuccess(getString(R.string.wash_recorded))
-                    clearForm()
-                    record?.let { printReceipt(it) }
+            result.onSuccess { resp ->
+                if (resp.success) {
+                    val msg = "${getLangStr("wash_recorded")}
+${getLangStr("invoice_number")}: ${resp.invoiceNumber ?: "-"}"
+                    AlertDialog.Builder(requireContext())
+                        .setTitle(getLangStr("success"))
+                        .setMessage(msg)
+                        .setPositiveButton(getLangStr("print")) { _, _ ->
+                            activity?.let { act -> PrintManager.printWashReceipt(act, car, resp, isPaid) }
+                        }
+                        .setNegativeButton(getLangStr("close"), null)
+                        .show()
+                    resetForm(view)
                 } else {
-                    showError(getString(R.string.record_failed))
+                    Toast.makeText(requireContext(), resp.message ?: getLangStr("error"), Toast.LENGTH_SHORT).show()
                 }
+            }.onFailure {
+                Toast.makeText(requireContext(), getLangStr("connection_error"), Toast.LENGTH_SHORT).show()
             }
-
-            override fun onFailure(call: Call<WashRecord>, t: Throwable) {
-                if (!isAdded) return
-                showLoading(false)
-                showError(getString(R.string.connection_error))
-            }
-        })
-    }
-
-    private fun printReceipt(record: WashRecord) {
-        context?.let { ctx ->
-            PrinterManager.printWashReceipt(ctx, record)
         }
     }
 
-    private fun showLoading(show: Boolean) {
-        progressBar.visibility = if (show) View.VISIBLE else View.GONE
-        btnRecord.isEnabled = !show
+    private fun resetForm(view: View) {
+        view.findViewById<EditText>(R.id.etPlateSearch)?.setText("")
+        view.findViewById<View>(R.id.cardCarInfo)?.visibility = View.GONE
+        view.findViewById<EditText>(R.id.etWashNotes)?.setText("")
+        view.findViewById<Switch>(R.id.switchPaid)?.isChecked = true
+        selectedCar = null
+        updateRecordButton(view)
     }
 
-    private fun showSuccess(msg: String) {
-        tvResult.text = msg
-        tvResult.setTextColor(resources.getColor(R.color.success_green, null))
-        tvResult.visibility = View.VISIBLE
+    private fun updateRecordButton(view: View) {
+        val btn = view.findViewById<Button>(R.id.btnRecordWash)
+        btn?.isEnabled = selectedCar != null
+        btn?.alpha = if (selectedCar != null) 1.0f else 0.5f
     }
 
-    private fun showError(msg: String) {
-        tvResult.text = msg
-        tvResult.setTextColor(resources.getColor(R.color.error_red, null))
-        tvResult.visibility = View.VISIBLE
+    private fun getLangStr(key: String): String {
+        val lang = SessionManager.getLang(requireContext())
+        return when (key) {
+            "searching" -> when (lang) { "en" -> "Searching..."; "bn" -> "খুঁজছি..."; else -> "جاري البحث..." }
+            "no_cars_found" -> when (lang) { "en" -> "No cars found"; "bn" -> "কোনো গাড়ি পাওয়া যায়নি"; else -> "لا توجد سيارات" }
+            "confirm_wash" -> when (lang) { "en" -> "Confirm Wash"; "bn" -> "ওয়াশ নিশ্চিত করুন"; else -> "تأكيد الغسيل" }
+            "plate" -> when (lang) { "en" -> "Plate"; "bn" -> "প্লেট"; else -> "اللوحة" }
+            "price" -> when (lang) { "en" -> "Price"; "bn" -> "মূল্য"; else -> "السعر" }
+            "payment" -> when (lang) { "en" -> "Payment"; "bn" -> "পেমেন্ট"; else -> "الدفع" }
+            "paid" -> when (lang) { "en" -> "Paid"; "bn" -> "পরিশোধিত"; else -> "مدفوع" }
+            "unpaid" -> when (lang) { "en" -> "Unpaid"; "bn" -> "অপরিশোধিত"; else -> "غير مدفوع" }
+            "confirm" -> when (lang) { "en" -> "Confirm"; "bn" -> "নিশ্চিত"; else -> "تأكيد" }
+            "cancel" -> when (lang) { "en" -> "Cancel"; "bn" -> "বাতিল"; else -> "إلغاء" }
+            "wash_recorded" -> when (lang) { "en" -> "Wash Recorded!"; "bn" -> "ওয়াশ রেকর্ড হয়েছে!"; else -> "تم تسجيل الغسيل!" }
+            "invoice_number" -> when (lang) { "en" -> "Invoice #"; "bn" -> "ইনভয়েস #"; else -> "رقم الفاتورة" }
+            "success" -> when (lang) { "en" -> "Success"; "bn" -> "সফল"; else -> "نجاح" }
+            "print" -> when (lang) { "en" -> "Print"; "bn" -> "প্রিন্ট"; else -> "طباعة" }
+            "close" -> when (lang) { "en" -> "Close"; "bn" -> "বন্ধ"; else -> "إغلاق" }
+            "sar" -> when (lang) { "en" -> "SAR"; "bn" -> "সৌদি রিয়াল"; else -> "ر.س" }
+            "error" -> when (lang) { "en" -> "Error"; "bn" -> "ত্রুটি"; else -> "خطأ" }
+            "connection_error" -> when (lang) { "en" -> "Connection error"; "bn" -> "সংযোগ ত্রুটি"; else -> "خطأ في الاتصال" }
+            else -> key
+        }
     }
-
-    private fun clearForm() {
-        etCarSearch.text.clear()
-        etPlate.text.clear()
-        etServiceType.text.clear()
-        tvCarInfo.visibility = View.GONE
-        selectedCarId = null
-    }
-}
+                            }
