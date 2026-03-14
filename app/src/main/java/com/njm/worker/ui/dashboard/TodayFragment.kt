@@ -1,127 +1,98 @@
 package com.njm.worker.ui.dashboard
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.njm.worker.R
-import com.njm.worker.data.ApiClient
 import com.njm.worker.data.model.WashRecord
-import com.njm.worker.printer.PrinterManager
-import com.njm.worker.utils.SessionManager
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.njm.worker.data.repository.WorkerRepository
+import com.njm.worker.printer.PrintManager
+import kotlinx.coroutines.launch
 
 /**
- * TodayFragment - Today's wash records
- * Navy/Gold design with print support
+ * TodayFragment - اليوم
+ * Design v2: Navy/Gold theme
  * Developer: meshari.tech
  */
 class TodayFragment : Fragment() {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var progressBar: ProgressBar
-    private lateinit var tvEmpty: TextView
-    private lateinit var tvTotalCount: TextView
-    private lateinit var tvTotalAmount: TextView
-    private lateinit var btnPrintSummary: Button
-    private lateinit var adapter: WashRecordAdapter
+    private val repo = WorkerRepository()
 
-    private val washRecords = mutableListOf<WashRecord>()
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_today, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews(view)
-        setupRecyclerView()
-        loadTodayRecords()
-    }
-
-    private fun initViews(view: View) {
-        recyclerView = view.findViewById(R.id.recycler_view)
-        progressBar = view.findViewById(R.id.progress_bar)
-        tvEmpty = view.findViewById(R.id.tv_empty)
-        tvTotalCount = view.findViewById(R.id.tv_total_count)
-        tvTotalAmount = view.findViewById(R.id.tv_total_amount)
-        btnPrintSummary = view.findViewById(R.id.btn_print_summary)
-
-        btnPrintSummary.setOnClickListener { printDailySummary() }
-    }
-
-    private fun setupRecyclerView() {
-        adapter = WashRecordAdapter(washRecords) { record ->
-            // On item click - reprint receipt
-            context?.let { ctx ->
-                PrinterManager.printWashReceipt(ctx, record)
-                Toast.makeText(ctx, R.string.printing, Toast.LENGTH_SHORT).show()
-            }
-        }
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = adapter
-    }
-
-    private fun loadTodayRecords() {
-        showLoading(true)
-        val session = SessionManager(requireContext())
-        val workerId = session.getWorkerId()
-
-        ApiClient.apiService.getTodayWashes(workerId).enqueue(object : Callback<List<WashRecord>> {
-            override fun onResponse(call: Call<List<WashRecord>>, response: Response<List<WashRecord>>) {
-                if (!isAdded) return
-                showLoading(false)
-                val records = response.body() ?: emptyList()
-                washRecords.clear()
-                washRecords.addAll(records)
-                adapter.notifyDataSetChanged()
-                updateStats()
-
-                if (records.isEmpty()) {
-                    tvEmpty.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
-                } else {
-                    tvEmpty.visibility = View.GONE
-                    recyclerView.visibility = View.VISIBLE
-                }
-            }
-
-            override fun onFailure(call: Call<List<WashRecord>>, t: Throwable) {
-                if (!isAdded) return
-                showLoading(false)
-                Toast.makeText(requireContext(), R.string.connection_error, Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
-    private fun updateStats() {
-        tvTotalCount.text = getString(R.string.total_washes_count, washRecords.size)
-        val total = washRecords.sumOf { it.price ?: 0.0 }
-        tvTotalAmount.text = getString(R.string.total_amount, total)
-    }
-
-    private fun printDailySummary() {
-        context?.let { ctx ->
-            PrinterManager.printDailySummary(ctx, washRecords)
-            Toast.makeText(ctx, R.string.printing_summary, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun showLoading(show: Boolean) {
-        progressBar.visibility = if (show) View.VISIBLE else View.GONE
+        loadWashes(view)
     }
 
     override fun onResume() {
         super.onResume()
-        loadTodayRecords()
+        view?.let { loadWashes(it) }
+    }
+
+    private fun loadWashes(view: View) {
+        val rv = view.findViewById<RecyclerView>(R.id.rvTodayWashes)
+        val tvEmpty = view.findViewById<TextView>(R.id.tvNoWashes)
+        val tvTotal = view.findViewById<TextView>(R.id.tvTodayTotal)
+        val tvPaid = view.findViewById<TextView>(R.id.tvTodayPaid)
+        val tvUnpaid = view.findViewById<TextView>(R.id.tvTodayUnpaid)
+
+        rv.layoutManager = LinearLayoutManager(requireContext())
+
+        lifecycleScope.launch {
+            repo.getTodayWashes().onSuccess { data ->
+                val washes = data.washes ?: emptyList()
+                tvEmpty.visibility = if (washes.isEmpty()) View.VISIBLE else View.GONE
+                rv.visibility = if (washes.isEmpty()) View.GONE else View.VISIBLE
+
+                val total = washes.sumOf { it.cost ?: 0.0 }
+                val paid = washes.filter { (it.isPaid ?: 1) == 1 }.sumOf { it.cost ?: 0.0 }
+                val unpaid = washes.filter { (it.isPaid ?: 1) == 0 }.sumOf { it.cost ?: 0.0 }
+                tvTotal?.text = String.format("%.0f ر.س", total)
+                tvPaid?.text = String.format("%.0f ر.س", paid)
+                tvUnpaid?.text = String.format("%.0f ر.س", unpaid)
+
+                if (washes.isNotEmpty()) {
+                    rv.adapter = WashRecordAdapter(
+                        washes,
+                        onPrint = { wash ->
+                            (activity as? DashboardActivity)?.let {
+                                PrintManager.printWashReceipt(it, wash, it)
+                            }
+                        },
+                        onTogglePaid = { wash -> togglePayment(wash) }
+                    )
+                }
+            }.also {
+                repo.getTodayWashes().onFailure {
+                    tvEmpty?.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    private fun togglePayment(wash: WashRecord) {
+        val newPaid = if ((wash.isPaid ?: 1) == 1) 0 else 1
+        val msg = if (newPaid == 1) "تحديد كمدفوع؟" else "تحديد كغير مدفوع؟"
+        AlertDialog.Builder(requireContext())
+            .setTitle("تحديث حالة الدفع")
+            .setMessage(msg)
+            .setPositiveButton("نعم") { _, _ ->
+                lifecycleScope.launch {
+                    repo.updatePayment(wash.id, newPaid)
+                    view?.let { loadWashes(it) }
+                }
+            }
+            .setNegativeButton("إلغاء", null)
+            .show()
     }
 }
