@@ -19,10 +19,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/**
- * NewWashFragment - Design v2
- * Developer: meshari.tech
- */
 class NewWashFragment : Fragment() {
 
     private val repo = WorkerRepository()
@@ -44,6 +40,7 @@ class NewWashFragment : Fragment() {
         val rvCars = view.findViewById<ListView>(R.id.lvSearchResults)
         val tvStatus = view.findViewById<TextView>(R.id.tvSearchStatus)
         val cardCarInfo = view.findViewById<View>(R.id.cardCarInfo)
+
         etPlate.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val query = s?.toString()?.trim() ?: ""
@@ -84,7 +81,7 @@ class NewWashFragment : Fragment() {
                     } else {
                         tvStatus.visibility = View.GONE
                         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1,
-                            cars.map { "${dollar}{it.plateNumber} - ${dollar}{it.carTypeLabel ?: it.carType ?: ""}" })
+                            cars.map { "${it.plateNumber} - ${it.carTypeLabel ?: it.carType ?: ""}" })
                         lv.adapter = adapter
                         lv.visibility = View.VISIBLE
                         lv.setOnItemClickListener { _, _, pos, _ ->
@@ -104,14 +101,17 @@ class NewWashFragment : Fragment() {
     private fun showCarInfo(car: CarDetail, cardCarInfo: View, root: View) {
         selectedCar = car
         cardCarInfo.visibility = View.VISIBLE
+
         root.findViewById<TextView>(R.id.tvCarPlate)?.text = car.plateNumber
         root.findViewById<TextView>(R.id.tvCarType)?.text = car.carTypeLabel ?: car.carType ?: "-"
         root.findViewById<TextView>(R.id.tvCarOwner)?.text = car.ownerName ?: "-"
         root.findViewById<TextView>(R.id.tvCarPhone)?.text = car.ownerPhone ?: "-"
-        root.findViewById<TextView>(R.id.tvCarBrand)?.text = "${dollar}{car.carBrand ?: ""} ${dollar}{car.carModel ?: ""} ${dollar}{car.modelYear ?: ""}".trim()
+        root.findViewById<TextView>(R.id.tvCarBrand)?.text = "${car.carBrand ?: ""} ${car.carModel ?: ""} ${car.modelYear ?: ""}".trim()
         root.findViewById<TextView>(R.id.tvCarOrg)?.text = car.orgName ?: "-"
+
         val price = car.washPrice ?: 0.0
-        root.findViewById<TextView>(R.id.tvWashPrice)?.text = "${dollar}price ${dollar}{getLangStr("sar")}"
+        root.findViewById<TextView>(R.id.tvWashPrice)?.text = "$price ${getLangStr("sar")}"
+
         updateRecordButton(root)
     }
 
@@ -120,19 +120,25 @@ class NewWashFragment : Fragment() {
         val btnRecord = view.findViewById<Button>(R.id.btnRecordWash)
         val btnPrint = view.findViewById<Button>(R.id.btnPrintReceipt)
         val switchPaid = view.findViewById<Switch>(R.id.switchPaid)
+
         updateRecordButton(view)
+
         btnRecord?.setOnClickListener {
             val car = selectedCar ?: return@setOnClickListener
             val isPaid = if (switchPaid?.isChecked == true) 1 else 0
             val notes = etNotes?.text?.toString() ?: ""
             val lang = SessionManager.getLang(requireContext())
+
             AlertDialog.Builder(requireContext())
                 .setTitle(getLangStr("confirm_wash"))
-                .setMessage("${dollar}{getLangStr("plate")}: ${dollar}{car.plateNumber}\n${dollar}{getLangStr("price")}: ${dollar}{car.washPrice ?: 0.0} ${dollar}{getLangStr("sar")}")
-                .setPositiveButton(getLangStr("confirm")) { _, _ -> recordWash(car, isPaid, notes, lang, view) }
+                .setMessage("${getLangStr("plate")}: ${car.plateNumber}\n${getLangStr("price")}: ${car.washPrice ?: 0.0} ${getLangStr("sar")}\n${getLangStr("payment")}: ${if (isPaid == 1) getLangStr("paid") else getLangStr("unpaid")}")
+                .setPositiveButton(getLangStr("confirm")) { _, _ ->
+                    recordWash(car, isPaid, notes, lang, view)
+                }
                 .setNegativeButton(getLangStr("cancel"), null)
                 .show()
         }
+
         btnPrint?.setOnClickListener {
             val car = selectedCar ?: return@setOnClickListener
             val act = activity ?: return@setOnClickListener
@@ -144,20 +150,26 @@ class NewWashFragment : Fragment() {
         val progressBar = view.findViewById<ProgressBar>(R.id.progressWash)
         progressBar?.visibility = View.VISIBLE
         view.findViewById<Button>(R.id.btnRecordWash)?.isEnabled = false
+
         lifecycleScope.launch {
             val result = repo.recordWash(car.id, isPaid, notes, lang)
             progressBar?.visibility = View.GONE
             view.findViewById<Button>(R.id.btnRecordWash)?.isEnabled = true
+
             result.onSuccess { resp ->
                 if (resp.success) {
+                    val msg = "${getLangStr("wash_recorded")}\n${getLangStr("invoice_number")}: ${resp.invoiceNumber ?: "-"}"
                     AlertDialog.Builder(requireContext())
                         .setTitle(getLangStr("success"))
-                        .setMessage("${dollar}{getLangStr("wash_recorded")}\n${dollar}{getLangStr("invoice_number")}: ${dollar}{resp.invoiceNumber ?: "-"}")
+                        .setMessage(msg)
                         .setPositiveButton(getLangStr("print")) { _, _ ->
-                            activity?.let { act -> PrintManager.printWashReceipt(act, car, resp, isPaid) }
+                            activity?.let { act ->
+                                PrintManager.printWashReceipt(act, car, resp, isPaid)
+                            }
                         }
                         .setNegativeButton(getLangStr("close"), null)
                         .show()
+                    // Reset form
                     resetForm(view)
                 } else {
                     Toast.makeText(requireContext(), resp.message ?: getLangStr("error"), Toast.LENGTH_SHORT).show()
@@ -186,23 +198,24 @@ class NewWashFragment : Fragment() {
     private fun getLangStr(key: String): String {
         val lang = SessionManager.getLang(requireContext())
         return when (key) {
-            "searching" -> when (lang) { "en" -> "Searching..."; else -> "جاري البحث..." }
-            "no_cars_found" -> when (lang) { "en" -> "No cars found"; else -> "لا توجد سيارات" }
-            "confirm_wash" -> when (lang) { "en" -> "Confirm Wash"; else -> "تاكيد الغسيل" }
-            "plate" -> when (lang) { "en" -> "Plate"; else -> "اللوحة" }
-            "price" -> when (lang) { "en" -> "Price"; else -> "السعر" }
-            "paid" -> when (lang) { "en" -> "Paid"; else -> "مدفوع" }
-            "unpaid" -> when (lang) { "en" -> "Unpaid"; else -> "غير مدفوع" }
-            "confirm" -> when (lang) { "en" -> "Confirm"; else -> "تاكيد" }
-            "cancel" -> when (lang) { "en" -> "Cancel"; else -> "الغاء" }
-            "wash_recorded" -> when (lang) { "en" -> "Wash Recorded!"; else -> "تم تسجيل الغسيل!" }
-            "invoice_number" -> when (lang) { "en" -> "Invoice #"; else -> "رقم الفاتورة" }
-            "success" -> when (lang) { "en" -> "Success"; else -> "نجاح" }
-            "print" -> when (lang) { "en" -> "Print"; else -> "طباعة" }
-            "close" -> when (lang) { "en" -> "Close"; else -> "اغلاق" }
-            "sar" -> when (lang) { "en" -> "SAR"; else -> "ر.س" }
-            "error" -> when (lang) { "en" -> "Error"; else -> "خطا" }
-            "connection_error" -> when (lang) { "en" -> "Connection error"; else -> "خطا في الاتصال" }
+            "searching" -> when (lang) { "en" -> "Searching..."; "bn" -> "খুঁজছি..."; else -> "جاري البحث..." }
+            "no_cars_found" -> when (lang) { "en" -> "No cars found"; "bn" -> "কোনো গাড়ি পাওয়া যায়নি"; else -> "لا توجد سيارات" }
+            "confirm_wash" -> when (lang) { "en" -> "Confirm Wash"; "bn" -> "ওয়াশ নিশ্চিত করুন"; else -> "تأكيد الغسيل" }
+            "plate" -> when (lang) { "en" -> "Plate"; "bn" -> "প্লেট"; else -> "اللوحة" }
+            "price" -> when (lang) { "en" -> "Price"; "bn" -> "মূল্য"; else -> "السعر" }
+            "payment" -> when (lang) { "en" -> "Payment"; "bn" -> "পেমেন্ট"; else -> "الدفع" }
+            "paid" -> when (lang) { "en" -> "Paid"; "bn" -> "পরিশোধিত"; else -> "مدفوع" }
+            "unpaid" -> when (lang) { "en" -> "Unpaid"; "bn" -> "অপরিশোধিত"; else -> "غير مدفوع" }
+            "confirm" -> when (lang) { "en" -> "Confirm"; "bn" -> "নিশ্চিত"; else -> "تأكيد" }
+            "cancel" -> when (lang) { "en" -> "Cancel"; "bn" -> "বাতিল"; else -> "إلغاء" }
+            "wash_recorded" -> when (lang) { "en" -> "Wash Recorded!"; "bn" -> "ওয়াশ রেকর্ড হয়েছে!"; else -> "تم تسجيل الغسيل!" }
+            "invoice_number" -> when (lang) { "en" -> "Invoice #"; "bn" -> "ইনভয়েস #"; else -> "رقم الفاتورة" }
+            "success" -> when (lang) { "en" -> "Success"; "bn" -> "সফল"; else -> "نجاح" }
+            "print" -> when (lang) { "en" -> "Print"; "bn" -> "প্রিন্ট"; else -> "طباعة" }
+            "close" -> when (lang) { "en" -> "Close"; "bn" -> "বন্ধ"; else -> "إغلاق" }
+            "sar" -> when (lang) { "en" -> "SAR"; "bn" -> "সৌদি রিয়াল"; else -> "ر.س" }
+            "error" -> when (lang) { "en" -> "Error"; "bn" -> "ত্রুটি"; else -> "خطأ" }
+            "connection_error" -> when (lang) { "en" -> "Connection error"; "bn" -> "সংযোগ ত্রুটি"; else -> "خطأ في الاتصال" }
             else -> key
         }
     }
