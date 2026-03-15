@@ -25,7 +25,8 @@ object PrintManager {
         PrinterManager.printWashReceipt(
             workerName = "", plateName = wash.plateNumber ?: "",
             carType = wash.carType ?: "", cost = wash.cost ?: 0.0,
-            orgName = wash.orgName ?: "NJM", isPaid = (wash.isPaid ?: 1) == 1
+            orgName = wash.orgName ?: "NJM", isPaid = (wash.isPaid ?: 1) == 1,
+                        context = context
         )
     }
 
@@ -34,7 +35,8 @@ object PrintManager {
             workerName = "", plateName = car.plateNumber,
             carType = car.carTypeLabel ?: car.carType ?: "",
             cost = car.washPrice ?: resp.cost ?: 0.0,
-            orgName = car.orgName ?: "NJM", isPaid = isPaid == 1
+            orgName = car.orgName ?: "NJM", isPaid = isPaid == 1,
+                        context = context
         )
     }
 
@@ -42,7 +44,8 @@ object PrintManager {
         PrinterManager.printWashReceipt(
             workerName = "", plateName = car.plateNumber,
             carType = car.carTypeLabel ?: car.carType ?: "",
-            cost = car.washPrice ?: 0.0, orgName = car.orgName ?: "NJM", isPaid = true
+            cost = car.washPrice ?: 0.0, orgName = car.orgName ?: "NJM", isPaid = true,
+                        context = context
         )
     }
 
@@ -52,7 +55,8 @@ object PrintManager {
         PrinterManager.printWashReceipt(
             workerName = "Test اختبار", plateName = "ABC-1234",
             carType = "سيارة صغيرة", cost = 20.0,
-            orgName = "NJM - مغسلة نجم", isPaid = true
+            orgName = "NJM - مغسلة نجم", isPaid = true,
+                        context = context
         )
     }
 
