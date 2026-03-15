@@ -73,7 +73,8 @@ data class WashResponse(
     @SerializedName("wash_id") val washId: Int?,
     val plate: String?,
     val cost: Double?,
-    @SerializedName("invoice_number") val invoiceNumber: String?
+    @SerializedName("invoice_number") val invoiceNumber: String?,
+        @SerializedName("is_paid") val isPaid: Int?
 )
 
 data class WashRecord(
