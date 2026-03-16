@@ -31,8 +31,10 @@ class PinLoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val savedPin = SessionManager.getPin(this)
-        if (SessionManager.isLoggedIn(this) && savedPin.isNotEmpty()) {
+                    val hasPinHash = SessionManager.getStoredPinHash(this).isNotEmpty()
+                    // Auto-login: if session is marked logged in and we have a PIN hash, go to dashboard
+                                // The API session cookie handles auth; we don't need to re-send PIN
+                                            if (SessionManager.isLoggedIn(this) && hasPinHash) {
             setContentView(R.layout.activity_pin_login)
             initViews()
             loadLogo()
@@ -62,7 +64,30 @@ class PinLoginActivity : AppCompatActivity() {
                     progressBar.visibility = View.GONE
                     startDashboard()
                 }
-            }
+            }            // Session cookie valid - go directly to dashboard
+                            // Worker info will be refreshed from server on dashboard load
+                                            progressBar.visibility = View.VISIBLE
+                                                                lifecycleScope.launch {
+                                                                                        try {
+                                                                                                                    val infoResp = ApiClient.apiService.getWorkerInfo()
+                                                                                                                                            progressBar.visibility = View.GONE
+                                                                                                                    if (infoResp.isSuccessful && infoResp.body()?.success == true) {
+                                                                                                                                                    startDashboard()
+                                                                                                                    } else {
+                                                                                                                                                    // Session expired - force re-login
+                                                                                                                                                    AppCookieJar.clear()
+                                                                                                                                                                                SessionManager.logout(this@PinLoginActivity)
+                                                                                                                                                                                                            setupButtons()
+                                                                                                                                                                                                                                        tvError.text = "انتهت الجلسة. أدخل PIN مرة أخرى"
+                                                                                                                                                    tvError.visibility = View.VISIBLE
+                                                                                                                    }
+                                                                                        } catch (e: Exception) {
+                                                                                                                    progressBar.visibility = View.GONE
+                                                                                                                    // Network error - still attempt dashboard (offline resilience)
+                                                                                                                    startDashboard()
+                                                                                        }
+                                                                }
+                                                                                return
             return
         }
 
