@@ -1,36 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- NJM Brand Colors -->
-    <color name="njm_navy">#1a2744</color>
-    <color name="njm_navy_dark">#111b33</color>
-    <color name="njm_navy_light">#243258</color>
-    <color name="njm_gold">#c9a227</color>
-    <color name="njm_gold_light">#e0bb45</color>
-    <color name="njm_gold_dark">#a8851f</color>
 
-    <!-- Legacy Blue Colors (kept for backward compatibility) -->
-    <color name="primary_blue">#1a2744</color>
-    <color name="primary_blue_dark">#111b33</color>
-    <color name="primary_blue_light">#243258</color>
-    <color name="accent_blue">#c9a227</color>
+    <!-- ============================================
+         NJM BRAND IDENTITY v5.0
+         Primary: Deep Navy  #0D1B3E
+         Accent:  Gold       #C9A227
+         ============================================ -->
+
+    <!-- NJM Primary Navy -->
+    <color name="njm_navy">#0D1B3E</color>
+    <color name="njm_navy_dark">#080F24</color>
+    <color name="njm_navy_light">#162550</color>
+    <color name="njm_navy_card">#1A2744</color>
+    <color name="njm_navy_surface">#1E2D55</color>
+
+    <!-- NJM Gold Accent -->
+    <color name="njm_gold">#C9A227</color>
+    <color name="njm_gold_light">#E5BC45</color>
+    <color name="njm_gold_dark">#A88520</color>
+    <color name="njm_gold_faint">#1FC9A227</color>
+
+    <!-- Legacy aliases -->
+    <color name="primary_blue">#0D1B3E</color>
+    <color name="primary_blue_dark">#080F24</color>
+    <color name="primary_blue_light">#162550</color>
+    <color name="accent_blue">#C9A227</color>
 
     <!-- Status Colors -->
-    <color name="success_green">#2E7D32</color>
-    <color name="success_green_light">#4CAF50</color>
-    <color name="error_red">#C62828</color>
+    <color name="success_green">#1B6B35</color>
+    <color name="success_green_light">#2E9E51</color>
+    <color name="success_bg">#E8F5EC</color>
+    <color name="error_red">#B71C1C</color>
     <color name="error_red_light">#EF5350</color>
+    <color name="error_bg">#FDECEA</color>
     <color name="warning_orange">#E65100</color>
-    <color name="paid_bg">#E8F5E9</color>
-    <color name="unpaid_bg">#FFF3CD</color>
+    <color name="warning_bg">#FFF8E1</color>
 
-    <!-- UI Colors -->
-    <color name="background_light">#F5F5F5</color>
+    <!-- Paid / Unpaid -->
+    <color name="paid_bg">#E8F5EC</color>
+    <color name="paid_text">#1B6B35</color>
+    <color name="unpaid_bg">#FFF8E1</color>
+    <color name="unpaid_text">#B7610A</color>
+
+    <!-- Surface & Background -->
+    <color name="background_light">#F0F2F5</color>
     <color name="surface_white">#FFFFFF</color>
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
-    <color name="text_hint">#BDBDBD</color>
-    <color name="divider">#E0E0E0</color>
-    <color name="chip_background">#E3F0FF</color>
-    <color name="pin_dot_empty">#BDBDBD</color>
-    <color name="pin_dot_filled">#c9a227</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="divider">#E0E4EC</color>
+
+    <!-- Text -->
+    <color name="text_primary">#0D1B3E</color>
+    <color name="text_secondary">#5A6785</color>
+    <color name="text_hint">#AABBCC</color>
+    <color name="text_on_navy">#FFFFFF</color>
+    <color name="text_on_gold">#0D1B3E</color>
+
+    <!-- PIN Screen -->
+    <color name="pin_dot_empty">#3A4D6B</color>
+    <color name="pin_dot_filled">#C9A227</color>
+    <color name="pin_key_bg">#1A2744</color>
+    <color name="pin_key_text">#FFFFFF</color>
+    <color name="pin_confirm_bg">#C9A227</color>
+    <color name="pin_confirm_text">#0D1B3E</color>
+
+    <!-- Dashboard Header -->
+    <color name="header_bg">#0D1B3E</color>
+    <color name="header_border">#C9A227</color>
+    <color name="tab_selected">#C9A227</color>
+    <color name="tab_unselected">#667799</color>
+
+    <!-- Stat Cards -->
+    <color name="stat_card_wash">#1A2744</color>
+    <color name="stat_card_paid">#163A22</color>
+    <color name="stat_card_unpaid">#3A2800</color>
+    <color name="stat_value_color">#C9A227</color>
+
+    <!-- Misc -->
+    <color name="chip_background">#EDF0F7</color>
+    <color name="shadow_color">#1A000000</color>
+    <color name="ripple_gold">#40C9A227</color>
+    <color name="ripple_white">#40FFFFFF</color>
+
 </resources>
