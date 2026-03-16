@@ -1,4 +1,4 @@
-package com.njm.worker.data.api
+———package com.njm.worker.data.api
 
 import okhttp3.Cookie
 import okhttp3.CookieJar
@@ -27,12 +27,12 @@ object ApiClient {
     private const val BASE_URL = "https://njm.company/"
     
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+                level = HttpLoggingInterceptor.Level.BASIC // Never BODY - would log PIN
     }
     
     val client: OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
-        .connectTimeout(30, TimeUnit.SECONDS)
+                    .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .cookieJar(AppCookieJar)
         .build()
