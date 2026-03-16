@@ -11,6 +11,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,31 +38,44 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: njm-worker-debug
+          name: njm-worker-v4.0-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
-      - name: Create Release
+      - name: Create GitHub Release v70
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v67
-          name: "NJM Worker v67 - Fix Car Search + Auto Session"
+          tag_name: v70
+          name: "NJM Worker v4.0 (70) - Comprehensive Improvements"
           files: app/build/outputs/apk/debug/app-debug.apk
           body: |
-            ## NJM Worker App v67 - Critical Bug Fixes
+            ## NJM Worker App v4.0 (versionCode 70)
 
-            ### What's Fixed:
-            ✅ **Car search now works** - Fixed session authentication issue
-            ✅ **Auto-relogin on app start** - No more "خطأ بالاتصال" after restart
-            ✅ **Sunmi SDK** (com.sunmi:printerlibrary:1.0.23) properly integrated
-            ✅ **PrinterManager** uses InnerPrinterManager.getInstance().bindService()
-            ✅ **App icon** (NJM gold star) appears on home screen
-            ✅ **NJM Logo** visible inside the app
-            ✅ **ZATCA invoice settings**: org name, VAT number, CR number, address
-            ✅ **Printer auto-detect** button with status indicator
-            ✅ **Paper size**: 58mm (Sunmi V2s) / 80mm
-            ✅ **meshari.tech** developer credit everywhere
+            ### What Changed in v4.0:
 
-            Developer: meshari.tech
+            **Security Improvements:**
+            - PIN stored as SHA-256 hash (never plain text)
+            - HTTPS enforced via networkSecurityConfig
+            - cleartext traffic disabled in AndroidManifest
+            - Session cookie handling improved
+            - HTTP logging reduced to BASIC level (no body logging)
+
+            **Session / Login Fixes:**
+            - PinLoginActivity: removed duplicate/dead auto-login code block
+            - Auto-login now uses single clean flow: getWorkerInfo() for session validation
+            - Proper AppCookieJar.clear() on session expiry
+            - Offline resilience: network error on startup gracefully falls to dashboard
+
+            **Code Quality:**
+            - SessionManager: removed extra closing braces (compilation fix)
+            - SessionManager: added verifyPin() method for local PIN verification
+            - All files cleaned of injected content
+
+            **Build:**
+            - versionCode: 69 → 70
+            - versionName: "3.2" → "4.0"
+            - minifyEnabled + shrinkResources for release
+
+            Developer: meshari.tech | NJM Car Wash Management System
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
