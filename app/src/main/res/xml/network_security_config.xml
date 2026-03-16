@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Network Security Configuration for NJM Worker App
+    - Production: HTTPS only, no cleartext allowed
+    - Debug: cleartext allowed for local development only
+    - njm.company: enforced HTTPS with system trust anchors
+-->
+<network-security-config>
+      <!-- Default: HTTPS only, system CA only -->
+      <base-config cleartextTrafficPermitted="false">
+                <trust-anchors>
+                              <certificates src="system" />
+                </trust-anchors>
+      </base-config>
+
+      <!-- Production API domain: strict HTTPS -->
+      <domain-config cleartextTrafficPermitted="false">
+                <domain includeSubdomains="true">njm.company</domain>
+                <trust-anchors>
+                              <certificates src="system" />
+                </trust-anchors>
+      </domain-config>
+
+      <!-- Debug only: allow user-installed CAs for testing -->
+      <debug-overrides>
+                <trust-anchors>
+                              <certificates src="system" />
+                              <certificates src="user" />
+                </trust-anchors>
+      </debug-overrides>
+</network-security-config>
