@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.njm.worker.R
 import com.njm.worker.data.api.ApiClient
+import com.njm.worker.data.api.AppCookieJar
 import com.njm.worker.data.model.LoginRequest
 import com.njm.worker.ui.dashboard.DashboardActivity
 import com.njm.worker.utils.SessionManager
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 
 /**
  * PinLoginActivity - NJM Worker App Login Screen
- * Design v2: NJM logo loaded via Glide
+ * v4.0: Fixed auto-login flow - uses getWorkerInfo() for session validation
+ * Removed duplicate/dead code block from previous version
  * Developer: meshari.tech
  */
 class PinLoginActivity : AppCompatActivity() {
@@ -30,31 +32,24 @@ class PinLoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_pin_login)
+        initViews()
+        loadLogo()
 
-                    val hasPinHash = SessionManager.getStoredPinHash(this).isNotEmpty()
-                    // Auto-login: if session is marked logged in and we have a PIN hash, go to dashboard
-                                // The API session cookie handles auth; we don't need to re-send PIN
-                                            if (SessionManager.isLoggedIn(this) && hasPinHash) {
-            setContentView(R.layout.activity_pin_login)
-            initViews()
-            loadLogo()
+        // Auto-login: if session is marked logged in, validate server session via cookie
+        if (SessionManager.isLoggedIn(this) && SessionManager.getStoredPinHash(this).isNotEmpty()) {
             progressBar.visibility = View.VISIBLE
             tvError.visibility = View.GONE
             lifecycleScope.launch {
                 try {
-                    val response = ApiClient.apiService.loginWithPin(LoginRequest(pin = savedPin))
+                    val infoResp = ApiClient.apiService.getWorkerInfo()
                     progressBar.visibility = View.GONE
-                    if (response.isSuccessful && response.body()?.success == true) {
-                        val body = response.body()!!
-                        SessionManager.saveWorker(
-                            this@PinLoginActivity,
-                            body.workerId ?: 0,
-                            body.workerName ?: "",
-                            body.orgId ?: 0,
-                            savedPin
-                        )
+                    if (infoResp.isSuccessful && infoResp.body()?.success == true) {
+                        // Session cookie still valid - go directly to dashboard
                         startDashboard()
                     } else {
+                        // Session expired - force re-login
+                        AppCookieJar.clear()
                         SessionManager.logout(this@PinLoginActivity)
                         setupButtons()
                         tvError.text = "انتهت الجلسة. أدخل PIN مرة أخرى"
@@ -62,39 +57,13 @@ class PinLoginActivity : AppCompatActivity() {
                     }
                 } catch (e: Exception) {
                     progressBar.visibility = View.GONE
+                    // Network error on startup - allow offline access to dashboard
                     startDashboard()
                 }
-            }            // Session cookie valid - go directly to dashboard
-                            // Worker info will be refreshed from server on dashboard load
-                                            progressBar.visibility = View.VISIBLE
-                                                                lifecycleScope.launch {
-                                                                                        try {
-                                                                                                                    val infoResp = ApiClient.apiService.getWorkerInfo()
-                                                                                                                                            progressBar.visibility = View.GONE
-                                                                                                                    if (infoResp.isSuccessful && infoResp.body()?.success == true) {
-                                                                                                                                                    startDashboard()
-                                                                                                                    } else {
-                                                                                                                                                    // Session expired - force re-login
-                                                                                                                                                    AppCookieJar.clear()
-                                                                                                                                                                                SessionManager.logout(this@PinLoginActivity)
-                                                                                                                                                                                                            setupButtons()
-                                                                                                                                                                                                                                        tvError.text = "انتهت الجلسة. أدخل PIN مرة أخرى"
-                                                                                                                                                    tvError.visibility = View.VISIBLE
-                                                                                                                    }
-                                                                                        } catch (e: Exception) {
-                                                                                                                    progressBar.visibility = View.GONE
-                                                                                                                    // Network error - still attempt dashboard (offline resilience)
-                                                                                                                    startDashboard()
-                                                                                        }
-                                                                }
-                                                                                return
-            return
+            }
+        } else {
+            setupButtons()
         }
-
-        setContentView(R.layout.activity_pin_login)
-        initViews()
-        loadLogo()
-        setupButtons()
     }
 
     private fun initViews() {
@@ -113,9 +82,11 @@ class PinLoginActivity : AppCompatActivity() {
             val logoView = findViewById<ImageView>(R.id.ivLogo) ?: return
             com.bumptech.glide.Glide.with(this)
                 .load("https://njm.company/static/img/logo.png")
+                .placeholder(R.drawable.ic_launcher)
+                .error(R.drawable.ic_launcher)
                 .into(logoView)
         } catch (e: Exception) {
-            // Logo view may not exist in old layout - ignore
+            // Logo view optional - safe to ignore
         }
     }
 
@@ -149,20 +120,18 @@ class PinLoginActivity : AppCompatActivity() {
 
     private fun updateDots() {
         dots.forEachIndexed { i, dot ->
-            dot.text = if (i < pin.length) "●" else "○"
+            dot.text = if (i < pin.length) "\u25CF" else "\u25CB"
         }
     }
 
     private fun doLogin() {
         val pinStr = pin.toString()
         if (pinStr.length != 4) {
-            tvError.text = "PIN يجب أن يكون 4 أرقام"
-            tvError.visibility = View.VISIBLE
+            showError("PIN يجب أن يكون 4 أرقام")
             return
         }
         tvError.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
-
         lifecycleScope.launch {
             try {
                 val response = ApiClient.apiService.loginWithPin(LoginRequest(pin = pinStr))
@@ -179,19 +148,22 @@ class PinLoginActivity : AppCompatActivity() {
                     startDashboard()
                 } else {
                     val msg = response.body()?.message ?: "PIN غير صحيح"
-                    tvError.text = msg
-                    tvError.visibility = View.VISIBLE
+                    showError(msg)
                     pin.clear()
                     updateDots()
                 }
             } catch (e: Exception) {
                 progressBar.visibility = View.GONE
-                tvError.text = "خطأ في الاتصال: " + (e.message ?: "")
-                tvError.visibility = View.VISIBLE
+                showError("خطأ في الاتصال: " + (e.message ?: ""))
                 pin.clear()
                 updateDots()
             }
         }
+    }
+
+    private fun showError(msg: String) {
+        tvError.text = msg
+        tvError.visibility = View.VISIBLE
     }
 
     private fun startDashboard() {
