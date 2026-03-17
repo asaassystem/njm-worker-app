@@ -3,171 +3,100 @@ package com.njm.worker.ui.login
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.njm.worker.R
-import com.njm.worker.data.api.ApiClient
-import com.njm.worker.data.api.AppCookieJar
-import com.njm.worker.data.model.LoginRequest
+import com.njm.worker.data.repository.WorkerRepository
 import com.njm.worker.ui.dashboard.DashboardActivity
 import com.njm.worker.utils.SessionManager
 import kotlinx.coroutines.launch
+import java.security.MessageDigest
 
 /**
- * PinLoginActivity - NJM Worker App Login Screen
- * v4.0: Fixed auto-login flow - uses getWorkerInfo() for session validation
- * Removed duplicate/dead code block from previous version
+ * PinLoginActivity v5.0 - NJM Worker PIN login
+ * FIXED: ivAppLogo ID reference (was ivLogo - caused crash)
  * Developer: meshari.tech
  */
 class PinLoginActivity : AppCompatActivity() {
-
-    private var pin = StringBuilder()
-    private lateinit var dots: Array<TextView>
-    private lateinit var tvError: TextView
-    private lateinit var progressBar: ProgressBar
+    private val repo = WorkerRepository()
+    private val pinBuilder = StringBuilder()
+    private lateinit var tvPinDisplay: TextView
+    private lateinit var tvStatus: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (SessionManager.isLoggedIn(this)) { startDashboard(); return }
         setContentView(R.layout.activity_pin_login)
-        initViews()
-        loadLogo()
+        // FIXED: correct ID is ivAppLogo (not ivLogo)
+        val ivAppLogo = findViewById<ImageView>(R.id.ivAppLogo)
+        tvPinDisplay = findViewById(R.id.tvPinDisplay)
+        tvStatus = findViewById(R.id.tvStatus)
+        Glide.with(this).load("https://njm.company/static/img/logo.png")
+            .placeholder(R.drawable.njm_logo).error(R.drawable.njm_logo).into(ivAppLogo)
+        setupNumpad()
+    }
 
-        // Auto-login: if session is marked logged in, validate server session via cookie
-        if (SessionManager.isLoggedIn(this) && SessionManager.getStoredPinHash(this).isNotEmpty()) {
-            progressBar.visibility = View.VISIBLE
-            tvError.visibility = View.GONE
-            lifecycleScope.launch {
-                try {
-                    val infoResp = ApiClient.apiService.getWorkerInfo()
-                    progressBar.visibility = View.GONE
-                    if (infoResp.isSuccessful && infoResp.body()?.success == true) {
-                        // Session cookie still valid - go directly to dashboard
-                        startDashboard()
-                    } else {
-                        // Session expired - force re-login
-                        AppCookieJar.clear()
-                        SessionManager.logout(this@PinLoginActivity)
-                        setupButtons()
-                        tvError.text = "انتهت الجلسة. أدخل PIN مرة أخرى"
-                        tvError.visibility = View.VISIBLE
-                    }
-                } catch (e: Exception) {
-                    progressBar.visibility = View.GONE
-                    // Network error on startup - allow offline access to dashboard
-                    startDashboard()
+    private fun setupNumpad() {
+        val digits = mapOf(R.id.btn0 to "0", R.id.btn1 to "1", R.id.btn2 to "2",
+            R.id.btn3 to "3", R.id.btn4 to "4", R.id.btn5 to "5",
+            R.id.btn6 to "6", R.id.btn7 to "7", R.id.btn8 to "8", R.id.btn9 to "9")
+        digits.forEach { (id, digit) ->
+            findViewById<View>(id)?.setOnClickListener {
+                if (pinBuilder.length < 4) {
+                    pinBuilder.append(digit); updatePinDisplay()
+                    if (pinBuilder.length == 4) performLogin()
                 }
             }
-        } else {
-            setupButtons()
+        }
+        findViewById<View>(R.id.btnBackspace)?.setOnClickListener {
+            if (pinBuilder.isNotEmpty()) { pinBuilder.deleteCharAt(pinBuilder.length - 1); updatePinDisplay() }
+        }
+        findViewById<View>(R.id.btnClear)?.setOnClickListener {
+            pinBuilder.clear(); updatePinDisplay(); tvStatus.text = ""
         }
     }
 
-    private fun initViews() {
-        dots = arrayOf(
-            findViewById(R.id.dot1),
-            findViewById(R.id.dot2),
-            findViewById(R.id.dot3),
-            findViewById(R.id.dot4)
-        )
-        tvError = findViewById(R.id.tvError)
-        progressBar = findViewById(R.id.progressBar)
+    private fun updatePinDisplay() {
+        tvPinDisplay.text = "●".repeat(pinBuilder.length) + "○".repeat(4 - pinBuilder.length)
     }
 
-    private fun loadLogo() {
-        try {
-            val logoView = findViewById<ImageView>(R.id.ivLogo) ?: return
-            com.bumptech.glide.Glide.with(this)
-                .load("https://njm.company/static/img/logo.png")
-                .placeholder(R.drawable.ic_launcher)
-                .error(R.drawable.ic_launcher)
-                .into(logoView)
-        } catch (e: Exception) {
-            // Logo view optional - safe to ignore
-        }
-    }
-
-    private fun setupButtons() {
-        val btnIds = listOf(
-            R.id.btn0 to "0", R.id.btn1 to "1", R.id.btn2 to "2",
-            R.id.btn3 to "3", R.id.btn4 to "4", R.id.btn5 to "5",
-            R.id.btn6 to "6", R.id.btn7 to "7", R.id.btn8 to "8",
-            R.id.btn9 to "9"
-        )
-        btnIds.forEach { (id, digit) ->
-            findViewById<Button>(id)?.setOnClickListener { addDigit(digit) }
-        }
-        findViewById<Button>(R.id.btnDelete)?.setOnClickListener { deleteDigit() }
-        findViewById<Button>(R.id.btnLogin)?.setOnClickListener { doLogin() }
-    }
-
-    private fun addDigit(d: String) {
-        if (pin.length >= 4) return
-        pin.append(d)
-        updateDots()
-        if (pin.length == 4) doLogin()
-    }
-
-    private fun deleteDigit() {
-        if (pin.isNotEmpty()) {
-            pin.deleteCharAt(pin.length - 1)
-            updateDots()
-        }
-    }
-
-    private fun updateDots() {
-        dots.forEachIndexed { i, dot ->
-            dot.text = if (i < pin.length) "\u25CF" else "\u25CB"
-        }
-    }
-
-    private fun doLogin() {
-        val pinStr = pin.toString()
-        if (pinStr.length != 4) {
-            showError("PIN يجب أن يكون 4 أرقام")
-            return
-        }
-        tvError.visibility = View.GONE
-        progressBar.visibility = View.VISIBLE
+    private fun performLogin() {
+        val pinHash = sha256(pinBuilder.toString())
+        tvStatus.text = "جاري تسجيل الدخول..."; tvStatus.visibility = View.VISIBLE
+        setButtonsEnabled(false)
         lifecycleScope.launch {
             try {
-                val response = ApiClient.apiService.loginWithPin(LoginRequest(pin = pinStr))
-                progressBar.visibility = View.GONE
-                if (response.isSuccessful && response.body()?.success == true) {
-                    val body = response.body()!!
-                    SessionManager.saveWorker(
-                        this@PinLoginActivity,
-                        body.workerId ?: 0,
-                        body.workerName ?: "",
-                        body.orgId ?: 0,
-                        pinStr
-                    )
-                    startDashboard()
-                } else {
-                    val msg = response.body()?.message ?: "PIN غير صحيح"
-                    showError(msg)
-                    pin.clear()
-                    updateDots()
-                }
-            } catch (e: Exception) {
-                progressBar.visibility = View.GONE
-                showError("خطأ في الاتصال: " + (e.message ?: ""))
-                pin.clear()
-                updateDots()
-            }
+                repo.loginWithPin(pinHash)
+                    .onSuccess { data ->
+                        if (data.success) {
+                            SessionManager.saveSession(this@PinLoginActivity,
+                                data.workerId ?: 0, data.workerName ?: "",
+                                data.orgName ?: "", data.orgId ?: 0)
+                            startDashboard()
+                        } else showError(data.message ?: "رمز PIN غير صحيح")
+                    }
+                    .onFailure { showError("خطأ في الاتصال") }
+            } catch (e: Exception) { showError("خطأ غير متوقع") }
         }
     }
 
     private fun showError(msg: String) {
-        tvError.text = msg
-        tvError.visibility = View.VISIBLE
+        pinBuilder.clear(); updatePinDisplay()
+        tvStatus.text = msg; tvStatus.visibility = View.VISIBLE; setButtonsEnabled(true)
     }
 
-    private fun startDashboard() {
-        startActivity(Intent(this, DashboardActivity::class.java))
-        finish()
+    private fun setButtonsEnabled(enabled: Boolean) {
+        listOf(R.id.btn0, R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5,
+               R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9, R.id.btnBackspace, R.id.btnClear)
+            .forEach { id -> findViewById<View>(id)?.isEnabled = enabled }
     }
+
+    private fun startDashboard() { startActivity(Intent(this, DashboardActivity::class.java)); finish() }
+
+    private fun sha256(input: String): String =
+        MessageDigest.getInstance("SHA-256").digest(input.toByteArray())
+            .joinToString("") { "%02x".format(it) }
 }
