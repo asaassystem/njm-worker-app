@@ -46,123 +46,25 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v71
-          name: "NJM Worker v5.0 (71) - Full Feature Activation & UI Redesign"
+          name: "NJM Worker v5.0 (71) - Feature Activation & UI Redesign"
           files: app/build/outputs/apk/debug/app-debug.apk
           body: |
             ## NJM Worker App v5.0 (versionCode 71)
-            ### Previous version: v4.0 (versionCode 70) — tag: v70 (rollback available)
+            Previous version: v4.0 (versionCode 70) — tag v70 — ROLLBACK AVAILABLE
 
-            ### What Changed in v5.0:
+            ### Changes in v5.0:
+            - FIXED: PinLoginActivity ivLogo ID -> ivAppLogo (crash fix)
+            - FIXED: SearchActivity wrong PrintManager import
+            - FIXED: Arabic UI throughout SearchActivity
+            - ACTIVATED: Invoice system (InvoicesFragment + API verified)
+            - ACTIVATED: Receipt printing via PrinterManager AIDL
+            - ACTIVATED: Payment toggle in Today and Month fragments
+            - REDESIGNED: activity_search.xml - Navy/Gold brand, Arabic RTL
+            - versionCode: 70 -> 71, versionName: 4.0 -> 5.0
 
-            **Critical Bug Fixes:**
-            - FIXED: PinLoginActivity ivLogo ID mismatch → now correctly uses ivAppLogo
-            - FIXED: SearchActivity import of PrintManager (wrong package path)
-            - FIXED: Arabic UI strings in SearchActivity (was English only)
+            ### Rollback to v4.0:
+            git checkout v70  OR  download APK from release v70
 
-            **Feature Activations:**
-            - Invoice system: fully activated (InvoicesFragment + backend API verified)
-            - Receipt printing: confirmed end-to-end via PrinterManager AIDL
-            - Payment toggle (paid/unpaid): working in Today & Month fragments
-            - Stats dashboard: today totals + paid/unpaid breakdown
-            - Month stats: count + paid/unpaid amounts
-            - Car search: Arabic UI + wash record creation
-            - Print settings: Sunmi auto-detection + network printer support
-            - Organization info: loaded from backend via getSettings()
-            - Language switcher: Arabic/English/Bengali persistence
-
-            **UI/UX Improvements:**
-            - Login screen: NJM logo loaded via Glide, cleaner error handling
-            - Dashboard: Navy/Gold brand consistency verified
-            - Wash record cards: color-coded paid (white) / unpaid (gold tint)
-            - Arabic RTL layout confirmed throughout
-
-            **Version Info:**
-            - versionCode: 70 → 71
-            - versionName: "4.0" → "5.0"
-
-            **Rollback Instructions:**
-            To revert to v4.0: checkout tag v70 or download artifact from release v70
-
-            Developer: meshari.tech | NJM Car Wash Management System
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}name: Build NJM Worker APK
-
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.2'
-
-      - name: Build Debug APK
-        run: gradle assembleDebug --no-daemon
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: njm-worker-v4.0-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
-
-      - name: Create GitHub Release v70
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v70
-          name: "NJM Worker v4.0 (70) - Comprehensive Improvements"
-          files: app/build/outputs/apk/debug/app-debug.apk
-          body: |
-            ## NJM Worker App v4.0 (versionCode 70)
-
-            ### What Changed in v4.0:
-
-            **Security Improvements:**
-            - PIN stored as SHA-256 hash (never plain text)
-            - HTTPS enforced via networkSecurityConfig
-            - cleartext traffic disabled in AndroidManifest
-            - Session cookie handling improved
-            - HTTP logging reduced to BASIC level (no body logging)
-
-            **Session / Login Fixes:**
-            - PinLoginActivity: removed duplicate/dead auto-login code block
-            - Auto-login now uses single clean flow: getWorkerInfo() for session validation
-            - Proper AppCookieJar.clear() on session expiry
-            - Offline resilience: network error on startup gracefully falls to dashboard
-
-            **Code Quality:**
-            - SessionManager: removed extra closing braces (compilation fix)
-            - SessionManager: added verifyPin() method for local PIN verification
-            - All files cleaned of injected content
-
-            **Build:**
-            - versionCode: 69 → 70
-            - versionName: "3.2" → "4.0"
-            - minifyEnabled + shrinkResources for release
-
-            Developer: meshari.tech | NJM Car Wash Management System
+            Developer: meshari.tech | NJM Car Wash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
