@@ -1,204 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layoutDirection="rtl"
-    android:background="#F5F5F5">
-
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#1565C0"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
-
-    <!-- Search Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:background="#FFFFFF"
-        android:elevation="2dp">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Enter plate number"
-            android:layout_marginEnd="8dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPlateNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapCharacters"
-                android:imeOptions="actionSearch"
-                android:singleLine="true"/>
+    android:background="#F0F2F5">
+    <androidx.appcompat.widget.Toolbar android:id="@+id/toolbar"
+        android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
+        android:background="@color/njm_navy" android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:padding="12dp" android:background="#FFFFFF" android:elevation="3dp">
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:hint="رقم اللوحة" android:layout_marginEnd="8dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/etPlateNumber"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:inputType="textCapCharacters" android:imeOptions="actionSearch" android:singleLine="true" android:textSize="18sp"/>
         </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/btnSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Search"
-            android:backgroundTint="#1565C0"
-            android:textColor="#FFFFFF"/>
+        <Button android:id="@+id/btnSearch" android:layout_width="80dp" android:layout_height="52dp"
+            android:text="بحث" android:backgroundTint="@color/njm_navy"
+            android:textColor="@color/njm_gold" android:textSize="15sp" android:textStyle="bold"/>
     </LinearLayout>
-
-    <!-- Progress -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:visibility="gone"/>
-
-    <!-- No results -->
-    <TextView
-        android:id="@+id/tvNoResults"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No car found"
-        android:gravity="center"
-        android:padding="32dp"
-        android:textColor="#999999"
-        android:visibility="gone"/>
-
-    <!-- Car Details Card -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardCar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="4dp"
-        android:visibility="gone"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Plate:"
-                    android:textColor="#666666"/>
-                <TextView
-                    android:id="@+id/tvCarPlate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#1565C0"
-                    android:textSize="18sp"
-                    android:textStyle="bold"/>
+    <ProgressBar android:id="@+id/progressBar" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp" android:indeterminateTint="@color/njm_gold" android:visibility="gone"/>
+    <TextView android:id="@+id/tvNoResults" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="لم يتم العثور على سيارة"
+        android:gravity="center" android:padding="40dp" android:textColor="#888888" android:textSize="16sp" android:visibility="gone"/>
+    <androidx.cardview.widget.CardView android:id="@+id/cardCar" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:layout_margin="12dp" app:cardCornerRadius="12dp"
+        app:cardElevation="5dp" app:cardBackgroundColor="#FFFFFF" android:visibility="gone">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="16dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="10dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:text="رقم اللوحة:" android:textColor="#666666" android:textSize="14sp"/>
+                <TextView android:id="@+id/tvCarPlate" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="@color/njm_navy" android:textSize="20sp" android:textStyle="bold"/>
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="4dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Type:"
-                    android:textColor="#666666"/>
-                <TextView
-                    android:id="@+id/tvCarType"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#333333"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:layout_marginBottom="6dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:text="نوع السيارة:" android:textColor="#666666" android:textSize="14sp"/>
+                <TextView android:id="@+id/tvCarType" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="#333333" android:textSize="14sp"/>
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="4dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Organization:"
-                    android:textColor="#666666"/>
-                <TextView
-                    android:id="@+id/tvCarOrg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#333333"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:layout_marginBottom="6dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:text="المنظمة:" android:textColor="#666666" android:textSize="14sp"/>
+                <TextView android:id="@+id/tvCarOrg" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="#333333" android:textSize="14sp"/>
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Price:"
-                    android:textColor="#666666"/>
-                <TextView
-                    android:id="@+id/tvCarPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#2E7D32"
-                    android:textStyle="bold"
-                    android:textSize="16sp"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:layout_marginBottom="14dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:text="سعر الغسيل:" android:textColor="#666666" android:textSize="14sp"/>
+                <TextView android:id="@+id/tvCarPrice" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="@color/njm_gold" android:textSize="18sp" android:textStyle="bold"/>
             </LinearLayout>
-
-            <!-- Print Receipt Toggle -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Print receipt:"
-                    android:textColor="#333333"
-                    android:gravity="center_vertical"/>
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchPrintReceipt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:layout_marginBottom="14dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:text="طباعة إيصال:" android:textColor="#333333" android:gravity="center_vertical"/>
+                <androidx.appcompat.widget.SwitchCompat android:id="@+id/switchPrintReceipt"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"/>
             </LinearLayout>
-
-            <Button
-                android:id="@+id/btnRecordWash"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:text="Record Wash"
-                android:backgroundTint="#1565C0"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"/>
-
+            <Button android:id="@+id/btnRecordWash" android:layout_width="match_parent" android:layout_height="56dp"
+                android:text="تسجيل الغسيل ✓"
+                android:backgroundTint="@color/njm_gold" android:textColor="@color/njm_navy"
+                android:textSize="17sp" android:textStyle="bold"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-
-    <!-- Results list (when multiple cars) -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCars"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp"
-        android:visibility="gone"/>
-
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvCars"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:padding="8dp" android:visibility="gone"/>
 </LinearLayout>
