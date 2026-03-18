@@ -38,31 +38,31 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: njm-worker-v6.1-debug
+          name: njm-worker-v6.2-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
-      - name: Create GitHub Release v73
+      - name: Create GitHub Release v74
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v73
-          name: "NJM Worker v6.1 (73) - PIN Fix + Invoice Fix"
+          tag_name: v74
+          name: "NJM Worker v6.2 (74) - WhatsApp Invoice Share"
           files: app/build/outputs/apk/debug/app-debug.apk
           body: |
-            ## NJM Worker App v6.1 (versionCode 73)
-            Previous version: v6.0 (versionCode 72) — tag v72 — ROLLBACK AVAILABLE
+            ## NJM Worker App v6.2 (versionCode 74)
+            Previous version: v6.1 (versionCode 73) — tag v73 — ROLLBACK AVAILABLE
 
-            ### Changes in v6.1:
-            - CRITICAL FIX: PinLoginActivity - send plain 4-digit PIN (not SHA-256 hash)
-            - FIXED: WorkerRepository - clean error handling, no broken regex
-            - BACKEND FIX: /api/worker/invoices + /api/worker/create-invoice auth (role != worker)
-            - BACKEND FIX: invoice endpoints now use worker_org_id session key correctly
+            ### Changes in v6.2:
+            - NEW: InvoicesFragment - WhatsApp share button for invoices
+            - NEW: InvoicesFragment - Generic share sheet (any app) for invoices
+            - IMPROVED: Invoice dialog shows WhatsApp + Print + Close buttons
+            - IMPROVED: Invoice list item tap shows options menu (WhatsApp / Print / Share)
 
-            ### Rollback to v6.0:
+            ### Rollback to v6.1:
             ```
-            git checkout v72
+            git checkout v73
             ```
-            OR download APK from release v72
+            OR download APK from release v73
 
             Developer: meshari.tech | NJM Car Wash
         env:
