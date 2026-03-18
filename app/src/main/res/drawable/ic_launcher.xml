@@ -5,60 +5,81 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Navy background -->
-    <path android:fillColor="#1a2744"
-          android:pathData="M0,0 L108,0 L108,108 L0,108 Z"/>
+    <!-- White background (matching logo.png) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M0,0 L108,0 L108,108 L0,108 Z"/>
 
-    <!-- Gold circle frame -->
-    <path android:fillColor="#c9a227"
-          android:pathData="M54,8 A46,46 0 1,0 54,100 A46,46 0 1,0 54,8 Z"/>
-    <path android:fillColor="#1a2744"
-          android:pathData="M54,12 A42,42 0 1,0 54,96 A42,42 0 1,0 54,12 Z"/>
+    <!-- Gold thin border ring -->
+    <path
+        android:fillColor="#c9a227"
+        android:pathData="M54,2 A52,52 0 1,0 54,106 A52,52 0 1,0 54,2 Z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,4 A50,50 0 1,0 54,104 A50,50 0 1,0 54,4 Z"/>
 
-    <!-- Star rays - Navy gold -->
-    <path android:fillColor="#c9a227"
-          android:pathData="M52,20 L55,48 L54,50 L53,48 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M52,58 L55,88 L54,90 L53,88 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M18,52 L46,55 L48,54 L46,53 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M62,52 L90,55 L92,54 L90,53 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M27,27 L48,48 L47,50 L45,48 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M81,27 L60,48 L61,50 L63,48 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M27,81 L48,60 L50,61 L48,63 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M81,81 L60,60 L58,61 L60,63 Z"/>
-
-    <!-- Secondary rays -->
-    <path android:fillColor="#c9a227"
-          android:pathData="M32,22 L49,47 L47,49 L46,46 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M76,22 L59,47 L61,49 L62,46 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M20,38 L45,52 L46,50 L44,49 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M88,38 L63,52 L62,50 L64,49 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M20,70 L45,56 L46,58 L44,59 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M88,70 L63,56 L62,58 L64,59 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M32,86 L49,61 L51,62 L49,64 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M76,86 L59,61 L57,62 L59,64 Z"/>
-
+    <!-- ===== STAR CENTER ===== -->
     <!-- Center diamond -->
-    <path android:fillColor="#c9a227"
-          android:pathData="M54,47 L60,54 L54,61 L48,54 Z"/>
+    <path
+        android:fillColor="#1a2744"
+        android:pathData="M54,32 L57,37 L54,42 L51,37 Z"/>
 
-    <!-- Arabic calligraphy stroke -->
-    <path android:fillColor="#c9a227"
-          android:pathData="M54,62 C52,65 48,70 44,75 C41,79 39,83 40,85 C41,87 43,86 45,83 C47,80 48,76 50,72 C52,68 54,65 55,62 Z"/>
-    <path android:fillColor="#c9a227"
-          android:pathData="M38,82 A3,3 0 1,0 38,88 A3,3 0 1,0 38,82 Z"/>
+    <!-- Main 8 rays - long -->
+    <!-- Top -->
+    <path android:fillColor="#1a2744"
+        android:pathData="M53.5,10 L54.5,10 L55,37 L53,37 Z"/>
+    <!-- Bottom (shortened - flows to calligraphy) -->
+    <path android:fillColor="#1a2744"
+        android:pathData="M53,42 L55,42 L55.5,52 L52.5,52 Z"/>
+    <!-- Left -->
+    <path android:fillColor="#1a2744"
+        android:pathData="M16,36 L16,38 L51,37.5 L51,36.5 Z"/>
+    <!-- Right -->
+    <path android:fillColor="#1a2744"
+        android:pathData="M57,36.5 L57,37.5 L91,38 L91,36 Z"/>
+    <!-- Top-left diagonal -->
+    <path android:fillColor="#1a2744"
+        android:pathData="M22,16 L23.5,14.5 L52,35 L50.5,36.5 Z"/>
+    <!-- Top-right diagonal -->
+    <path android:fillColor="#1a2744"
+        android:pathData="M85,15 L86.5,16.5 L58,35 L56.5,33.5 Z"/>
+    <!-- Bottom-left diagonal -->
+    <path android:fillColor="#1a2744"
+        android:pathData="M25,58 L23.5,59.5 L51,41 L52.5,42.5 Z"/>
+    <!-- Bottom-right diagonal -->
+    <path android:fillColor="#1a2744"
+        android:pathData="M83,58 L84.5,59.5 L57,42 L55.5,40.5 Z"/>
+
+    <!-- Secondary rays (thinner - between main rays) -->
+    <path android:fillColor="#1a2744"
+        android:pathData="M33,11 L34,10 L52.5,35.5 L51.5,36.5 Z"/>
+    <path android:fillColor="#1a2744"
+        android:pathData="M75,11 L76,12 L56.5,35.5 L55.5,34.5 Z"/>
+    <path android:fillColor="#1a2744"
+        android:pathData="M18,26 L17,28 L50.5,38 L50.5,36.5 Z"/>
+    <path android:fillColor="#1a2744"
+        android:pathData="M90,26 L91,28 L57.5,37.5 L57.5,36 Z"/>
+    <path android:fillColor="#1a2744"
+        android:pathData="M18,48 L17,50 L51,40 L51.5,38.5 Z"/>
+    <path android:fillColor="#1a2744"
+        android:pathData="M90,48 L91,50 L57,40 L56.5,38.5 Z"/>
+    <path android:fillColor="#1a2744"
+        android:pathData="M32,62 L33,63 L52.5,43 L51.5,42 Z"/>
+    <path android:fillColor="#1a2744"
+        android:pathData="M76,62 L75,63 L55.5,43 L56.5,42 Z"/>
+
+    <!-- ===== ARABIC CALLIGRAPHY "najm" ===== -->
+    <!-- Main flowing stroke (right side upper curve) -->
+    <path
+        android:fillColor="#1a2744"
+        android:pathData="M55,52 C56,55 59,58 62,63 C65,68 66,72 64,76 C62,79 59,79 57,76 C55,73 54,69 53,65 C52,61 51,57 50,54 C49,51 48,50 47,50 C46,50 45,51 45,52 L44,52 C44,50 45,48 47,48 C49,48 51,49 52,52 C53,55 54,59 55,63 C56,67 57,71 59,73 C61,75 63,75 64,73 C65,70 64,66 62,62 C60,58 57,55 55,52 Z"/>
+    <!-- Dot for letter Jim -->
+    <path
+        android:fillColor="#1a2744"
+        android:pathData="M61,79 A2.5,2.5 0 1,0 61,84 A2.5,2.5 0 1,0 61,79 Z"/>
+    <!-- Lower tail extending left and down -->
+    <path
+        android:fillColor="#1a2744"
+        android:pathData="M47,50 C45,52 42,56 40,61 C38,66 37,71 38,75 C39,78 41,79 43,77 C45,75 46,71 47,67 C48,63 49,59 50,56 L52,56 C51,60 49,64 48,68 C47,72 46,76 44,78 C42,80 39,80 37,77 C35,74 35,69 37,63 C39,57 42,52 45,49 Z"/>
 
 </vector>
