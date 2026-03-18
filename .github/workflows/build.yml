@@ -38,41 +38,31 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: njm-worker-v6.0-debug
+          name: njm-worker-v6.1-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
-      - name: Create GitHub Release v72
+      - name: Create GitHub Release v73
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v72
-          name: "NJM Worker v6.0 (72) - Full UI/UX Redesign & System Alignment"
+          tag_name: v73
+          name: "NJM Worker v6.1 (73) - PIN Fix + Invoice Fix"
           files: app/build/outputs/apk/debug/app-debug.apk
           body: |
-            ## NJM Worker App v6.0 (versionCode 72)
+            ## NJM Worker App v6.1 (versionCode 73)
+            Previous version: v6.0 (versionCode 72) — tag v72 — ROLLBACK AVAILABLE
 
-            Previous version: v5.0 (versionCode 71) — tag v71 — ROLLBACK AVAILABLE
+            ### Changes in v6.1:
+            - CRITICAL FIX: PinLoginActivity - send plain 4-digit PIN (not SHA-256 hash)
+            - FIXED: WorkerRepository - clean error handling, no broken regex
+            - BACKEND FIX: /api/worker/invoices + /api/worker/create-invoice auth (role != worker)
+            - BACKEND FIX: invoice endpoints now use worker_org_id session key correctly
 
-            ### Changes in v6.0:
-            - REDESIGNED: TodayFragment - double-load fix, worker name on receipts, error feedback
-            - REDESIGNED: MonthFragment - worker name on receipts, improved loading state
-            - FIXED: PrintManager - worker name from SessionManager on all print calls
-            - FIXED: PrinterManager - all Arabic strings converted to Unicode escapes (build fix)
-            - FIXED: PinLoginActivity - correct XML view IDs (dot1-4, tvError, btnDelete, btnLogin)
-            - NEW: InvoiceAdapter - RecyclerView adapter for invoices with correct camelCase model fields
-            - NEW: InvoicesFragment - RecyclerView + InvoiceAdapter, loading state, error feedback
-            - NEW: item_invoice.xml - invoice card layout (Navy/Gold design)
-            - IMPROVED: fragment_invoices.xml - NJM header, RecyclerView layout
-            - IMPROVED: fragment_today.xml - 4-column stats card with tvTodayCount
-            - IMPROVED: PrintManager - workerName overload for TodayFragment/MonthFragment
-            - NEW: NjmApp.kt - tryBindSunmiPrinter uses real PrinterManager.init
-            - versionCode: 71 -> 72, versionName: 5.0 -> 6.0
-
-            ### Rollback to v5.0:
+            ### Rollback to v6.0:
             ```
-            git checkout v71
+            git checkout v72
             ```
-            OR download APK from release v71
+            OR download APK from release v72
 
             Developer: meshari.tech | NJM Car Wash
         env:
