@@ -38,31 +38,31 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: njm-worker-v6.2-debug
+          name: njm-worker-v6.3-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
-      - name: Create GitHub Release v74
+      - name: Create GitHub Release v75
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v74
-          name: "NJM Worker v6.2 (74) - WhatsApp Invoice Share"
+          tag_name: v75
+          name: "NJM Worker v6.3 (75) - Logo Fix + Today/Month Data Fix"
           files: app/build/outputs/apk/debug/app-debug.apk
           body: |
-            ## NJM Worker App v6.2 (versionCode 74)
-            Previous version: v6.1 (versionCode 73) — tag v73 — ROLLBACK AVAILABLE
+            ## NJM Worker App v6.3 (versionCode 75)
+            Previous version: v6.2 (versionCode 74) — tag v74 — ROLLBACK AVAILABLE
 
-            ### Changes in v6.2:
-            - NEW: InvoicesFragment - WhatsApp share button for invoices
-            - NEW: InvoicesFragment - Generic share sheet (any app) for invoices
-            - IMPROVED: Invoice dialog shows WhatsApp + Print + Close buttons
-            - IMPROVED: Invoice list item tap shows options menu (WhatsApp / Print / Share)
+            ### Changes in v6.3:
+            - FIXED: App icon updated to NJM official logo (star + arabic najm calligraphy)
+            - BACKEND FIX: today-washes-v2 now filters by worker_id (not just org)
+            - BACKEND FIX: month-washes-v2 now filters by worker_id (not just org)
+            - BACKEND FIX: login sets session user_id for proper wash attribution
+            - RESULT: Each worker sees only their own washes (matching website data)
 
-            ### Rollback to v6.1:
+            ### Rollback to v6.2:
             ```
-            git checkout v73
+            git checkout v74
             ```
-            OR download APK from release v73
 
             Developer: meshari.tech | NJM Car Wash
         env:
