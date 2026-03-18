@@ -14,11 +14,11 @@ import com.njm.worker.data.repository.WorkerRepository
 import com.njm.worker.ui.dashboard.DashboardActivity
 import com.njm.worker.utils.SessionManager
 import kotlinx.coroutines.launch
-import java.security.MessageDigest
 
 /**
- * PinLoginActivity v6.0 - NJM Worker PIN login
- * FIXED: Use correct XML view IDs (dot1-4, tvError, btnDelete, btnLogin)
+ * PinLoginActivity v6.1 - NJM Worker PIN login
+ * FIX: Send plain PIN to backend (backend stores plain codes, no hashing)
+ * FIX: Use correct XML view IDs (dot1-4, tvError, btnDelete, btnLogin)
  * Developer: meshari.tech
  */
 class PinLoginActivity : AppCompatActivity() {
@@ -26,7 +26,6 @@ class PinLoginActivity : AppCompatActivity() {
     private val repo = WorkerRepository()
     private val pinBuilder = StringBuilder()
 
-    // PIN dot views - matched to activity_pin_login.xml
     private lateinit var dot1: TextView
     private lateinit var dot2: TextView
     private lateinit var dot3: TextView
@@ -76,8 +75,6 @@ class PinLoginActivity : AppCompatActivity() {
                 }
             }
         }
-
-        // btnDelete = backspace (XML id: btnDelete)
         findViewById<View>(R.id.btnDelete)?.setOnClickListener {
             if (pinBuilder.isNotEmpty()) {
                 pinBuilder.deleteCharAt(pinBuilder.length - 1)
@@ -85,26 +82,23 @@ class PinLoginActivity : AppCompatActivity() {
                 tvError.visibility = View.GONE
             }
         }
-
-        // btnLogin = manual login trigger (XML id: btnLogin)
-        // Auto-login fires at 4 digits, but btnLogin allows manual confirm
         findViewById<View>(R.id.btnLogin)?.setOnClickListener {
             if (pinBuilder.length == 4) performLogin()
         }
     }
 
-    // Update the 4 dot TextViews using filled/empty circle chars
     private fun updatePinDots() {
-        val filled = "●"  // filled circle
-        val empty  = "○"  // empty circle
-        val dots = listOf(dot1, dot2, dot3, dot4)
-        dots.forEachIndexed { index, tv ->
-            tv.text = if (index < pinBuilder.length) filled else empty
+        val filled = "●"
+        val empty  = "○"
+        listOf(dot1, dot2, dot3, dot4).forEachIndexed { i, tv ->
+            tv.text = if (i < pinBuilder.length) filled else empty
         }
     }
 
     private fun performLogin() {
-        val pinHash = sha256(pinBuilder.toString())
+        // Send PLAIN PIN - backend compares directly to worker_codes.code / worker_pins.pin_code
+        val plainPin = pinBuilder.toString()
+
         tvError.text = "جاري تسجيل الدخول..."
         tvError.setTextColor(android.graphics.Color.parseColor("#c9a227"))
         tvError.visibility = View.VISIBLE
@@ -113,7 +107,7 @@ class PinLoginActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                repo.login(pinHash)
+                repo.login(plainPin)
                     .onSuccess { data ->
                         progressBar.visibility = View.GONE
                         if (data.success) {
@@ -122,7 +116,7 @@ class PinLoginActivity : AppCompatActivity() {
                                 data.workerId ?: 0,
                                 data.workerName ?: "",
                                 data.orgId ?: 0,
-                                pinBuilder.toString()
+                                plainPin
                             )
                             startDashboard()
                         } else {
@@ -161,9 +155,4 @@ class PinLoginActivity : AppCompatActivity() {
         startActivity(Intent(this, DashboardActivity::class.java))
         finish()
     }
-
-    private fun sha256(input: String): String =
-        MessageDigest.getInstance("SHA-256")
-            .digest(input.toByteArray())
-            .joinToString("") { "%02x".format(it) }
 }
