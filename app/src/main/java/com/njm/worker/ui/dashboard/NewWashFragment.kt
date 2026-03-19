@@ -171,6 +171,8 @@ class NewWashFragment : Fragment() {
                         .show()
                     // Reset form
                     resetForm(view)
+                // Notify Today/Month fragments to reload with fresh data
+                (activity as? DashboardActivity)?.refreshWashData()
                 } else {
                     Toast.makeText(requireContext(), resp.message ?: getLangStr("error"), Toast.LENGTH_SHORT).show()
                 }
