@@ -45,11 +45,11 @@ jobs:
       - name: Create GitHub Release v75
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v75
-          name: "NJM Worker v6.3 (75) - Logo Fix + Today/Month Data Fix"
+          tag_name: v76
+          name: "NJM Worker v6.4 (76) - Full API Integration + Invoice Audit"
           files: app/build/outputs/apk/debug/app-debug.apk
           body: |
-            ## NJM Worker App v6.3 (versionCode 75)
+            ## NJM Worker App v6.3 (versionCode 76)
             Previous version: v6.2 (versionCode 74) — tag v74 — ROLLBACK AVAILABLE
 
             ### Changes in v6.3:
